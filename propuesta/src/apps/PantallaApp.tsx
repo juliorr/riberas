@@ -5,6 +5,12 @@ import { Card } from "@/components/ui/card";
 import { Play, Menu, Home, Building2, Trees, UtensilsCrossed, Calendar, ChevronRight, ChevronLeft, Wifi, WifiOff, MapPin, Star, X, Image } from "lucide-react";
 import type { DeviceType } from "../App";
 import logoCircle from "../assets/logo-circle.png";
+import nonaCircle from "../assets/nona-circle.png";
+import nonaRounded from "../assets/nona-rounded.png";
+import nonaOg from "../assets/nona-og.png";
+import maderasCircle from "../assets/maderas-circle.png";
+import maderasRounded from "../assets/maderas-rounded.png";
+import maderasOg from "../assets/maderas-og.png";
 
 const GOLD = "#B8860B";
 const NAVY = "#1B2A4A";
@@ -95,8 +101,8 @@ function HomeMenu({ onNavigate, deviceType }: { onNavigate: (id: string) => void
     { icon: Building2, label: "Desarrollo", color: "#B8860B", target: "P-04" },
     { icon: MapPin, label: "Bienes Raices", color: "#2D6A4F", target: "P-05" },
     { icon: Star, label: "Club", color: "#1B2A4A", target: "P-07" },
-    { icon: UtensilsCrossed, label: "Maderas", color: "#8B4513", target: "P-08" },
-    { icon: Trees, label: "Nona", color: "#556B2F", target: "P-09" },
+    { icon: UtensilsCrossed, label: "Maderas", color: "#3a3a3a", target: "P-08" },
+    { icon: Trees, label: "Nona", color: "#C4A97D", target: "P-09" },
     { icon: Calendar, label: "Calendario", color: "#6B4C8A", target: "P-10" },
   ];
   return (
@@ -302,21 +308,36 @@ function MaderasScreen({ onNavigate, deviceType }: { onNavigate: (id: string) =>
       <div className="px-4 py-3 flex items-center justify-between border-b">
         <div className="flex items-center gap-3">
           <ChevronLeft className="w-5 h-5 text-gray-500 cursor-pointer hover:text-gray-800 transition" onClick={() => onNavigate("P-03")} />
-          <span className="text-sm font-semibold text-[#1B2A4A]">Maderas</span>
+          <div className="flex items-center gap-2">
+            <img src={maderasCircle} alt="Maderas" className="w-5 h-5 rounded-full" />
+            <span className="text-sm font-semibold text-[#1B2A4A]">Maderas</span>
+          </div>
         </div>
         <Badge className="bg-[#DA3743] text-white border-0 text-[9px]">OpenTable</Badge>
       </div>
-      <div className="h-36 bg-gradient-to-br from-[#8B4513] to-[#5a2d0a] flex items-end p-5">
-        <div>
-          <p className="text-white text-lg font-semibold">Restaurante Maderas</p>
-          <p className="text-white/60 text-xs">Cocina contemporanea mexicana</p>
+      <div className="h-36 relative overflow-hidden">
+        <img src={maderasOg} alt="Maderas" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#3a3a3a]/80 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 p-5 flex items-end justify-between">
+          <div>
+            <p className="text-white text-lg font-semibold">Restaurante Maderas</p>
+            <p className="text-white/60 text-xs">Cocina contemporánea mexicana</p>
+          </div>
+          <img src={maderasCircle} alt="Maderas" className="w-10 h-10 rounded-full border-2 border-white/30 shadow-lg" />
         </div>
       </div>
       <div className="p-4 space-y-4">
         <div className="border-2 border-dashed border-[#DA3743]/30 rounded-xl p-6 text-center bg-[#DA3743]/5">
           <UtensilsCrossed className="w-8 h-8 mx-auto mb-3 text-[#DA3743]" />
           <p className="text-sm font-semibold text-[#DA3743]">Widget OpenTable</p>
-          <p className="text-[10px] text-gray-400 mt-1">Reservacion integrada via overlay</p>
+          <p className="text-[10px] text-gray-400 mt-1">Reservación integrada vía overlay</p>
+        </div>
+        <div className="rounded-xl overflow-hidden border border-[#3a3a3a]/20 bg-[#3a3a3a]/5 p-3 flex items-center gap-3">
+          <img src={maderasRounded} alt="Maderas" className="w-12 h-12 rounded-xl shadow-sm" />
+          <div className="flex-1">
+            <p className="text-sm font-semibold text-[#3a3a3a]">Maderas Las Riberas</p>
+            <p className="text-[10px] text-gray-500">Reserva tu experiencia gastronómica</p>
+          </div>
         </div>
         <div className="space-y-2">
           <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Horario</p>
@@ -324,7 +345,7 @@ function MaderasScreen({ onNavigate, deviceType }: { onNavigate: (id: string) =>
             <span className="text-gray-600">Lun - Vie</span><span className="font-medium">13:00 - 23:00</span>
           </div>
           <div className="flex justify-between text-sm">
-            <span className="text-gray-600">Sab - Dom</span><span className="font-medium">10:00 - 23:00</span>
+            <span className="text-gray-600">Sáb - Dom</span><span className="font-medium">10:00 - 23:00</span>
           </div>
         </div>
         <Button className="w-full bg-[#DA3743] hover:bg-[#c0303d] text-white">RESERVAR MESA</Button>
@@ -336,29 +357,37 @@ function MaderasScreen({ onNavigate, deviceType }: { onNavigate: (id: string) =>
 // P-09: Nona
 function NonaScreen({ onNavigate, deviceType }: { onNavigate: (id: string) => void; deviceType: DeviceType }) {
   return (
-    <DeviceFrame label="Seccion Nona" id="P-09" deviceType={deviceType}>
+    <DeviceFrame label="Seccion Nona — Campo Fértil" id="P-09" deviceType={deviceType}>
       <StatusBar />
       <div className="px-4 py-3 flex items-center gap-3 border-b">
         <ChevronLeft className="w-5 h-5 text-gray-500 cursor-pointer hover:text-gray-800 transition" onClick={() => onNavigate("P-03")} />
-        <span className="text-sm font-semibold text-[#1B2A4A]">Nona</span>
+        <div className="flex items-center gap-2">
+          <img src={nonaCircle} alt="Nona" className="w-5 h-5 rounded-full" />
+          <span className="text-sm font-semibold text-[#1B2A4A]">Nona</span>
+        </div>
       </div>
-      <div className="h-44 bg-gradient-to-br from-[#556B2F] to-[#3a4a20] flex items-end p-5">
+      <div className="h-44 bg-gradient-to-br from-[#C4A97D] to-[#a08960] flex items-end p-5 relative">
+        <img src={nonaCircle} alt="Nona" className="absolute top-4 right-4 w-12 h-12 rounded-full shadow-lg border-2 border-white/30" />
         <div>
-          <p className="text-white text-lg font-semibold">Nona</p>
-          <p className="text-white/60 text-xs">Experiencia gastronomica italiana</p>
+          <p className="text-[#1a1a1a] text-lg font-semibold">Nona</p>
+          <p className="text-[#1a1a1a]/60 text-xs">Campo Fértil — Experiencia gastronómica</p>
         </div>
       </div>
       <div className="p-4 space-y-4">
         <p className="text-xs text-gray-500 leading-relaxed">
-          Disfruta de la autentica cocina italiana en un ambiente sofisticado rodeado de la naturaleza de Las Riberas.
+          Descubre la experiencia gastronómica de Nona Campo Fértil en Las Riberas. Cocina de autor con ingredientes locales en un entorno natural único.
         </p>
-        <div className="bg-gray-100 rounded-xl h-28 flex items-center justify-center">
-          <Image className="w-8 h-8 text-gray-300" />
+        <div className="rounded-xl overflow-hidden border border-[#C4A97D]/30">
+          <img src={nonaOg} alt="Nona Campo Fértil" className="w-full h-28 object-cover" />
         </div>
-        <div className="bg-gray-100 rounded-xl h-28 flex items-center justify-center">
-          <Image className="w-8 h-8 text-gray-300" />
+        <div className="rounded-xl overflow-hidden border border-[#C4A97D]/30 bg-[#C4A97D]/10 p-4 flex items-center gap-3">
+          <img src={nonaRounded} alt="Nona" className="w-14 h-14 rounded-xl shadow-sm" />
+          <div>
+            <p className="text-sm font-semibold text-[#1a1a1a]">@nonacampofertil</p>
+            <p className="text-[10px] text-gray-500">Síguenos en Instagram</p>
+          </div>
         </div>
-        <Button className="w-full bg-[#556B2F] hover:bg-[#3a4a20] text-white">CONOCER MAS</Button>
+        <Button className="w-full bg-[#C4A97D] hover:bg-[#a08960] text-[#1a1a1a] font-semibold">CONOCER MÁS</Button>
       </div>
     </DeviceFrame>
   );
