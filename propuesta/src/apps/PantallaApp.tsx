@@ -11,6 +11,7 @@ import nonaOg from "../assets/nona-og.png";
 import maderasCircle from "../assets/maderas-circle.png";
 import maderasRounded from "../assets/maderas-rounded.png";
 import maderasOg from "../assets/maderas-og.png";
+import lrVideo from "../assets/lr-video.mp4";
 
 const GOLD = "#B8860B";
 const NAVY = "#1B2A4A";
@@ -51,12 +52,18 @@ function StatusBar({ light = false }: { light?: boolean }) {
 function IdleMode({ onNavigate, deviceType }: { onNavigate: (id: string) => void; deviceType: DeviceType }) {
   return (
     <DeviceFrame label="Idle Mode — Playlist full-screen" id="P-01" deviceType={deviceType}>
-      <div className="h-full relative bg-gradient-to-b from-[#1B2A4A] to-[#0a1628]">
+      <div className="h-full relative bg-black">
+        <video
+          src={lrVideo}
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/20" />
         <StatusBar light />
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <div className="w-20 h-20 rounded-full bg-[#B8860B]/20 flex items-center justify-center mb-6">
-            <Play className="w-10 h-10 text-[#B8860B]" fill="#B8860B" />
-          </div>
+        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
           <p className="text-white/80 text-sm tracking-[0.3em] uppercase">Las Riberas</p>
           <p className="text-white/40 text-xs mt-2">Video 2 de 5</p>
           <div className="absolute bottom-24 flex gap-1.5">
@@ -64,36 +71,13 @@ function IdleMode({ onNavigate, deviceType }: { onNavigate: (id: string) => void
               <div key={i} className={`w-1.5 h-1.5 rounded-full ${i===1 ? "bg-[#B8860B]" : "bg-white/30"}`} />
             ))}
           </div>
-          <p onClick={() => onNavigate("P-03")} className="absolute bottom-12 text-white/30 text-[10px] cursor-pointer hover:text-white/60 transition">Toca para volver al menu</p>
         </div>
+        <p onClick={() => onNavigate("P-03")} className="absolute bottom-12 left-0 right-0 text-center text-white/30 text-[10px] cursor-pointer hover:text-white/60 transition">Toca para volver al menu</p>
       </div>
     </DeviceFrame>
   );
 }
 
-// P-02: Fallback Video
-function FallbackVideo({ onNavigate, deviceType }: { onNavigate: (id: string) => void; deviceType: DeviceType }) {
-  return (
-    <DeviceFrame label="Fallback — Video backup" id="P-02" deviceType={deviceType}>
-      <div className="h-full relative bg-black">
-        <StatusBar light />
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <div className="w-16 h-16 rounded-full bg-white/10 flex items-center justify-center mb-4">
-            <Play className="w-8 h-8 text-white/60" />
-          </div>
-          <p className="text-white/60 text-sm">Video de respaldo</p>
-          <div className="absolute top-16 right-4">
-            <Badge className="bg-red-500/80 text-white text-[9px] border-0">FALLBACK</Badge>
-          </div>
-          <div className="absolute bottom-32 left-6 right-6 bg-yellow-500/20 border border-yellow-500/40 rounded-lg p-3">
-            <p className="text-yellow-300 text-[10px] text-center">Playlist vacia o formato no soportado. Alerta enviada al Panel Admin.</p>
-          </div>
-          <p onClick={() => onNavigate("P-03")} className="absolute bottom-12 text-white/30 text-[10px] cursor-pointer hover:text-white/60 transition">Toca para volver al menu</p>
-        </div>
-      </div>
-    </DeviceFrame>
-  );
-}
 
 // P-03: Home / Menu Principal
 function HomeMenu({ onNavigate, deviceType }: { onNavigate: (id: string) => void; deviceType: DeviceType }) {
@@ -506,7 +490,6 @@ function OfflineScreen({ onNavigate, deviceType }: { onNavigate: (id: string) =>
 
 const screens = [
   { id: "P-01", label: "Idle" },
-  { id: "P-02", label: "Fallback" },
   { id: "P-03", label: "Home" },
   { id: "P-04", label: "Desarrollo" },
   { id: "P-05", label: "Listado" },
@@ -526,7 +509,6 @@ export function PantallaApp({ deviceType = "phone" as DeviceType }: { deviceType
     <div className="flex flex-col items-center gap-6">
       <div className="screen-fade" key={screen + deviceType}>
         {screen === "P-01" && <IdleMode onNavigate={setScreen} deviceType={deviceType} />}
-        {screen === "P-02" && <FallbackVideo onNavigate={setScreen} deviceType={deviceType} />}
         {screen === "P-03" && <HomeMenu onNavigate={setScreen} deviceType={deviceType} />}
         {screen === "P-04" && <SeccionDesarrollo onNavigate={setScreen} deviceType={deviceType} />}
         {screen === "P-05" && <BienesRaicesListado onNavigate={setScreen} deviceType={deviceType} />}
