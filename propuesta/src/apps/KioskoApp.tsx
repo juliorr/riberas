@@ -8,19 +8,24 @@ import {
   Building2, Trees, Dumbbell, Waves, ChevronDown, User, Phone as PhoneIcon,
   Mail, DollarSign, Ruler, ArrowLeft, Eye, Clock, AlertTriangle
 } from "lucide-react";
+import type { DeviceType } from "../App";
+import logoCircle from "../assets/logo-circle.png";
 
 const GOLD = "#B8860B";
 const NAVY = "#1B2A4A";
 
-function Phone({ children, label, id }: { children: React.ReactNode; label: string; id: string }) {
+function DeviceFrame({ children, label, id, deviceType = "phone" }: { children: React.ReactNode; label: string; id: string; deviceType?: DeviceType }) {
+  const frameClass = deviceType === "tablet-h" ? "tablet-h-frame" : deviceType === "tablet-v" ? "tablet-v-frame" : "phone-frame";
   return (
-    <div className="flex flex-col items-center gap-2">
-      <div className="phone-frame">
-        <div className="phone-notch" />
-        <div className="phone-content bg-white">{children}</div>
+    <div className="flex flex-col items-center gap-3">
+      <div className={`device-frame ${frameClass}`}>
+        {deviceType === "phone" && <div className="phone-notch" />}
+        {deviceType === "tablet-v" && <div className="tablet-v-camera" />}
+        {deviceType === "tablet-h" && <div className="tablet-h-camera" />}
+        <div className="device-content bg-white">{children}</div>
       </div>
-      <Badge variant="outline" className="text-xs font-mono">{id}</Badge>
-      <p className="text-sm text-gray-600 font-medium text-center max-w-[300px]">{label}</p>
+      <span className="screen-id">{id}</span>
+      <p className="screen-name">{label}</p>
     </div>
   );
 }
@@ -39,15 +44,36 @@ function StatusBar({ light = false }: { light?: boolean }) {
   );
 }
 
-// K-01: Mapa Interactivo
-function MapaInteractivo() {
+function BottomNav({ active, onNavigate }: { active: string; onNavigate: (id: string) => void }) {
   return (
-    <Phone label="Mapa Interactivo — Vista aérea con lotes" id="K-01">
+    <div className="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur border-t py-2 px-6">
+      <div className="flex justify-around">
+        <button onClick={() => onNavigate("K-01")} className="flex flex-col items-center gap-0.5">
+          <Map className="w-4 h-4" style={{ color: active === "map" ? GOLD : "#9ca3af" }} />
+          <span className="text-[9px] font-medium" style={{ color: active === "map" ? GOLD : "#9ca3af" }}>Mapa</span>
+        </button>
+        <button onClick={() => onNavigate("K-08")} className="flex flex-col items-center gap-0.5">
+          <Search className="w-4 h-4" style={{ color: active === "search" ? GOLD : "#9ca3af" }} />
+          <span className="text-[9px]" style={{ color: active === "search" ? GOLD : "#9ca3af" }}>Buscar</span>
+        </button>
+        <button onClick={() => onNavigate("K-09")} className="flex flex-col items-center gap-0.5">
+          <Star className="w-4 h-4" style={{ color: active === "amenities" ? GOLD : "#9ca3af" }} />
+          <span className="text-[9px]" style={{ color: active === "amenities" ? GOLD : "#9ca3af" }}>Amenidades</span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// K-01: Mapa Interactivo
+function MapaInteractivo({ onNavigate, deviceType }: { onNavigate: (id: string) => void; deviceType: DeviceType }) {
+  return (
+    <DeviceFrame label="Mapa Interactivo — Vista aérea con lotes" id="K-01" deviceType={deviceType}>
       <StatusBar />
       <div className="px-4 pt-2 pb-2">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold" style={{ color: NAVY }}>Mapa del Desarrollo</h2>
-          <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs">
+          <Button variant="ghost" size="sm" className="h-7 gap-1 text-xs" onClick={() => onNavigate("K-02")}>
             <Layers className="w-3 h-3" /> Capas
           </Button>
         </div>
@@ -73,8 +99,8 @@ function MapaInteractivo() {
           { x: "60%", y: "65%", status: "gold", n: "C-04" },
           { x: "80%", y: "30%", status: "green", n: "A-22" },
         ].map((lot, i) => (
-          <div key={i} className="absolute flex flex-col items-center" style={{ left: lot.x, top: lot.y }}>
-            <div className={`w-6 h-6 rounded-full border-2 border-white shadow-md flex items-center justify-center ${
+          <div key={i} className="absolute flex flex-col items-center cursor-pointer" style={{ left: lot.x, top: lot.y }} onClick={() => onNavigate("K-03")}>
+            <div className={`w-6 h-6 rounded-full border-2 border-white shadow-md flex items-center justify-center hover:scale-110 transition ${
               lot.status === "green" ? "bg-emerald-500" : lot.status === "gold" ? "bg-amber-500" : "bg-red-500"
             }`}>
               <span className="text-[7px] text-white font-bold">{lot.n}</span>
@@ -107,29 +133,13 @@ function MapaInteractivo() {
         <Button variant="outline" size="sm" className="h-7 w-7 p-0 text-xs">+</Button>
         <Button variant="outline" size="sm" className="h-7 w-7 p-0 text-xs">−</Button>
       </div>
-      {/* Bottom tab bar */}
-      <div className="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur border-t py-2 px-6">
-        <div className="flex justify-around">
-          <div className="flex flex-col items-center gap-0.5">
-            <Map className="w-4 h-4" style={{ color: GOLD }} />
-            <span className="text-[9px] font-medium" style={{ color: GOLD }}>Mapa</span>
-          </div>
-          <div className="flex flex-col items-center gap-0.5">
-            <Search className="w-4 h-4 text-gray-400" />
-            <span className="text-[9px] text-gray-400">Buscar</span>
-          </div>
-          <div className="flex flex-col items-center gap-0.5">
-            <Star className="w-4 h-4 text-gray-400" />
-            <span className="text-[9px] text-gray-400">Amenidades</span>
-          </div>
-        </div>
-      </div>
-    </Phone>
+      <BottomNav active="map" onNavigate={onNavigate} />
+    </DeviceFrame>
   );
 }
 
 // K-02: Selector de Capas
-function SelectorCapas() {
+function SelectorCapas({ onNavigate, deviceType }: { onNavigate: (id: string) => void; deviceType: DeviceType }) {
   const layers = [
     { name: "Lotes", icon: MapPin, active: true },
     { name: "Amenidades", icon: Star, active: true },
@@ -139,10 +149,10 @@ function SelectorCapas() {
     { name: "Infraestructura", icon: Building2, active: false },
   ];
   return (
-    <Phone label="Selector de Capas — Toggle GIS" id="K-02">
+    <DeviceFrame label="Selector de Capas — Toggle GIS" id="K-02" deviceType={deviceType}>
       <StatusBar />
       <div className="px-4 pt-2 pb-3 flex items-center gap-2">
-        <ArrowLeft className="w-4 h-4 text-gray-500" />
+        <ArrowLeft className="w-4 h-4 text-gray-500 cursor-pointer hover:text-gray-800 transition" onClick={() => onNavigate("K-01")} />
         <h2 className="text-sm font-semibold" style={{ color: NAVY }}>Capas del Mapa</h2>
       </div>
       <div className="px-4 space-y-2">
@@ -163,14 +173,14 @@ function SelectorCapas() {
       <div className="px-4 mt-4">
         <p className="text-[10px] text-gray-400 text-center">Las capas GIS se sincronizan desde el Panel Admin</p>
       </div>
-    </Phone>
+    </DeviceFrame>
   );
 }
 
 // K-03: Popup Lote
-function PopupLote() {
+function PopupLote({ onNavigate, deviceType }: { onNavigate: (id: string) => void; deviceType: DeviceType }) {
   return (
-    <Phone label="Popup — Info rápida de lote" id="K-03">
+    <DeviceFrame label="Popup — Info rápida de lote" id="K-03" deviceType={deviceType}>
       <StatusBar />
       {/* Map background */}
       <div className="h-[300px] bg-gradient-to-br from-green-100 via-green-50 to-blue-50 relative">
@@ -211,34 +221,27 @@ function PopupLote() {
             </div>
           </div>
           <div className="flex gap-2">
-            <Button size="sm" className="flex-1 h-8 text-xs" style={{ backgroundColor: NAVY }}>
+            <Button size="sm" className="flex-1 h-8 text-xs" style={{ backgroundColor: NAVY }} onClick={() => onNavigate("K-04")}>
               Ver Detalle
             </Button>
-            <Button size="sm" variant="outline" className="flex-1 h-8 text-xs" style={{ borderColor: GOLD, color: GOLD }}>
+            <Button size="sm" variant="outline" className="flex-1 h-8 text-xs" style={{ borderColor: GOLD, color: GOLD }} onClick={() => onNavigate("K-06")}>
               Cotizar
             </Button>
           </div>
         </Card>
       </div>
-      {/* Bottom nav */}
-      <div className="absolute bottom-0 left-0 right-0 bg-white/95 backdrop-blur border-t py-2 px-6">
-        <div className="flex justify-around">
-          <Map className="w-4 h-4" style={{ color: GOLD }} />
-          <Search className="w-4 h-4 text-gray-400" />
-          <Star className="w-4 h-4 text-gray-400" />
-        </div>
-      </div>
-    </Phone>
+      <BottomNav active="map" onNavigate={onNavigate} />
+    </DeviceFrame>
   );
 }
 
 // K-04: Detalle Lote
-function DetalleLote() {
+function DetalleLote({ onNavigate, deviceType }: { onNavigate: (id: string) => void; deviceType: DeviceType }) {
   return (
-    <Phone label="Detalle Lote — Ficha completa" id="K-04">
+    <DeviceFrame label="Detalle Lote — Ficha completa" id="K-04" deviceType={deviceType}>
       <StatusBar />
       <div className="px-4 pt-2 pb-2 flex items-center gap-2">
-        <ArrowLeft className="w-4 h-4 text-gray-500" />
+        <ArrowLeft className="w-4 h-4 text-gray-500 cursor-pointer hover:text-gray-800 transition" onClick={() => onNavigate("K-03")} />
         <h2 className="text-sm font-semibold" style={{ color: NAVY }}>Lote A-12</h2>
         <Badge className="ml-auto text-[9px] bg-emerald-100 text-emerald-700 border-0">Disponible</Badge>
       </div>
@@ -278,25 +281,25 @@ function DetalleLote() {
       </div>
       {/* CTA */}
       <div className="px-4 mt-4 space-y-2">
-        <Button className="w-full h-10 text-sm font-medium" style={{ backgroundColor: GOLD }}>
+        <Button className="w-full h-10 text-sm font-medium" style={{ backgroundColor: GOLD }} onClick={() => onNavigate("K-05")}>
           <FileText className="w-4 h-4 mr-2" /> Descargar Ficha PDF
         </Button>
-        <Button variant="outline" className="w-full h-10 text-sm font-medium" style={{ borderColor: NAVY, color: NAVY }}>
+        <Button variant="outline" className="w-full h-10 text-sm font-medium" style={{ borderColor: NAVY, color: NAVY }} onClick={() => onNavigate("K-06")}>
           <Send className="w-4 h-4 mr-2" /> Solicitar Cotización
         </Button>
       </div>
-    </Phone>
+    </DeviceFrame>
   );
 }
 
 // K-05: Visor PDF
-function VisorPDF() {
+function VisorPDF({ onNavigate, deviceType }: { onNavigate: (id: string) => void; deviceType: DeviceType }) {
   return (
-    <Phone label="Visor PDF — Ficha técnica" id="K-05">
+    <DeviceFrame label="Visor PDF — Ficha técnica" id="K-05" deviceType={deviceType}>
       <StatusBar />
       <div className="px-4 pt-2 pb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <ArrowLeft className="w-4 h-4 text-gray-500" />
+          <ArrowLeft className="w-4 h-4 text-gray-500 cursor-pointer hover:text-gray-800 transition" onClick={() => onNavigate("K-04")} />
           <h2 className="text-sm font-semibold" style={{ color: NAVY }}>Ficha Lote A-12</h2>
         </div>
         <Button variant="ghost" size="sm" className="h-7 w-7 p-0">
@@ -312,7 +315,7 @@ function VisorPDF() {
           {/* Simulated PDF content */}
           <div className="bg-white p-3 rounded shadow-sm">
             <div className="flex items-center gap-2 mb-2">
-              <div className="w-6 h-6 rounded-full bg-[#B8860B] flex items-center justify-center text-white text-[8px] font-bold">LR</div>
+              <img src={logoCircle} alt="LR" className="w-6 h-6 rounded-full" />
               <div>
                 <p className="text-[10px] font-semibold" style={{ color: NAVY }}>LAS RIBERAS</p>
                 <p className="text-[8px] text-gray-400">Ficha Técnica</p>
@@ -340,17 +343,17 @@ function VisorPDF() {
           <Download className="w-3 h-3 mr-1" /> Compartir PDF
         </Button>
       </div>
-    </Phone>
+    </DeviceFrame>
   );
 }
 
 // K-06: Cotización — Datos
-function CotizacionDatos() {
+function CotizacionDatos({ onNavigate, deviceType }: { onNavigate: (id: string) => void; deviceType: DeviceType }) {
   return (
-    <Phone label="Cotización — Captura de datos" id="K-06">
+    <DeviceFrame label="Cotización — Captura de datos" id="K-06" deviceType={deviceType}>
       <StatusBar />
       <div className="px-4 pt-2 pb-2 flex items-center gap-2">
-        <ArrowLeft className="w-4 h-4 text-gray-500" />
+        <ArrowLeft className="w-4 h-4 text-gray-500 cursor-pointer hover:text-gray-800 transition" onClick={() => onNavigate("K-04")} />
         <h2 className="text-sm font-semibold" style={{ color: NAVY }}>Solicitar Cotización</h2>
       </div>
       {/* Progress */}
@@ -398,18 +401,18 @@ function CotizacionDatos() {
         </div>
       </div>
       <div className="px-4 mt-4">
-        <Button className="w-full h-10 text-sm font-medium" style={{ backgroundColor: NAVY }}>
+        <Button className="w-full h-10 text-sm font-medium" style={{ backgroundColor: NAVY }} onClick={() => onNavigate("K-07")}>
           Continuar <ChevronRight className="w-4 h-4 ml-1" />
         </Button>
       </div>
-    </Phone>
+    </DeviceFrame>
   );
 }
 
 // K-07: Cotización — Confirmación
-function CotizacionConfirm() {
+function CotizacionConfirm({ onNavigate, deviceType }: { onNavigate: (id: string) => void; deviceType: DeviceType }) {
   return (
-    <Phone label="Cotización — Confirmación con folio" id="K-07">
+    <DeviceFrame label="Cotización — Confirmación con folio" id="K-07" deviceType={deviceType}>
       <StatusBar />
       <div className="flex flex-col items-center justify-center h-[85%] px-6">
         <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mb-4">
@@ -439,16 +442,16 @@ function CotizacionConfirm() {
         <p className="text-[10px] text-gray-400 text-center mb-4">
           Se ha enviado una copia a tu email y al CRM (HubSpot)
         </p>
-        <Button className="w-full h-10 text-sm" style={{ backgroundColor: NAVY }}>
+        <Button className="w-full h-10 text-sm" style={{ backgroundColor: NAVY }} onClick={() => onNavigate("K-01")}>
           <Home className="w-4 h-4 mr-2" /> Volver al Mapa
         </Button>
       </div>
-    </Phone>
+    </DeviceFrame>
   );
 }
 
 // K-08: Listado Inventario
-function ListadoInventario() {
+function ListadoInventario({ onNavigate, deviceType }: { onNavigate: (id: string) => void; deviceType: DeviceType }) {
   const lots = [
     { id: "A-12", section: "Río", area: "450", price: "$2.4M", status: "Disponible", color: "emerald" },
     { id: "A-15", section: "Río", area: "520", price: "$2.8M", status: "Disponible", color: "emerald" },
@@ -458,7 +461,7 @@ function ListadoInventario() {
     { id: "C-04", section: "Golf", area: "480", price: "$2.7M", status: "Apartado", color: "amber" },
   ];
   return (
-    <Phone label="Inventario — Lista con filtros" id="K-08">
+    <DeviceFrame label="Inventario — Lista con filtros" id="K-08" deviceType={deviceType}>
       <StatusBar />
       <div className="px-4 pt-2 pb-2">
         <h2 className="text-sm font-semibold" style={{ color: NAVY }}>Inventario de Lotes</h2>
@@ -482,7 +485,7 @@ function ListadoInventario() {
       {/* Lots list */}
       <div className="px-4 space-y-2 overflow-y-auto" style={{ maxHeight: "380px" }}>
         {lots.map((lot, i) => (
-          <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 border border-gray-100">
+          <div key={i} onClick={() => onNavigate("K-04")} className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 border border-gray-100 cursor-pointer hover:bg-gray-100 transition">
             <div className={`w-2 h-10 rounded-full ${
               lot.color === "emerald" ? "bg-emerald-500" : lot.color === "amber" ? "bg-amber-500" : "bg-red-400"
             }`} />
@@ -503,12 +506,13 @@ function ListadoInventario() {
           </div>
         ))}
       </div>
-    </Phone>
+      <BottomNav active="search" onNavigate={onNavigate} />
+    </DeviceFrame>
   );
 }
 
 // K-09: Amenidades
-function Amenidades() {
+function Amenidades({ onNavigate, deviceType }: { onNavigate: (id: string) => void; deviceType: DeviceType }) {
   const amenities = [
     { name: "Casa Club", desc: "Salón de eventos y terraza", icon: Building2, img: "from-amber-100 to-amber-50" },
     { name: "Alberca Infinity", desc: "Alberca con vista al río", icon: Waves, img: "from-blue-100 to-blue-50" },
@@ -518,7 +522,7 @@ function Amenidades() {
     { name: "Senderos", desc: "2.5 km de senderos naturales", icon: Trees, img: "from-emerald-100 to-emerald-50" },
   ];
   return (
-    <Phone label="Amenidades — Galería y descripción" id="K-09">
+    <DeviceFrame label="Amenidades — Galería y descripción" id="K-09" deviceType={deviceType}>
       <StatusBar />
       <div className="px-4 pt-2 pb-2">
         <h2 className="text-sm font-semibold" style={{ color: NAVY }}>Amenidades</h2>
@@ -537,16 +541,21 @@ function Amenidades() {
           </div>
         ))}
       </div>
-    </Phone>
+      <BottomNav active="amenities" onNavigate={onNavigate} />
+    </DeviceFrame>
   );
 }
 
 // K-10: Offline Mode
-function OfflineKiosko() {
+function OfflineKiosko({ onNavigate, deviceType }: { onNavigate: (id: string) => void; deviceType: DeviceType }) {
   return (
-    <Phone label="Offline — Modo sin conexión" id="K-10">
+    <DeviceFrame label="Offline — Modo sin conexión" id="K-10" deviceType={deviceType}>
       <StatusBar />
-      <div className="flex flex-col items-center justify-center h-[85%] px-6">
+      <div className="px-4 pt-2 pb-2 flex items-center gap-2">
+        <ArrowLeft className="w-4 h-4 text-gray-500 cursor-pointer hover:text-gray-800 transition" onClick={() => onNavigate("K-01")} />
+        <h2 className="text-sm font-semibold" style={{ color: NAVY }}>Modo Offline</h2>
+      </div>
+      <div className="flex flex-col items-center justify-center h-[75%] px-6">
         <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center mb-4">
           <WifiOff className="w-8 h-8 text-amber-600" />
         </div>
@@ -582,29 +591,50 @@ function OfflineKiosko() {
           </div>
         </div>
       </div>
-    </Phone>
+    </DeviceFrame>
   );
 }
 
-// Main export
-export function KioskoApp() {
+const screens = [
+  { id: "K-01", label: "Mapa" },
+  { id: "K-02", label: "Capas" },
+  { id: "K-03", label: "Popup" },
+  { id: "K-04", label: "Detalle" },
+  { id: "K-05", label: "PDF" },
+  { id: "K-06", label: "Cotizar" },
+  { id: "K-07", label: "Confirm." },
+  { id: "K-08", label: "Inventario" },
+  { id: "K-09", label: "Amenidades" },
+  { id: "K-10", label: "Offline" },
+];
+
+export function KioskoApp({ deviceType = "phone" as DeviceType }: { deviceType?: DeviceType }) {
+  const [screen, setScreen] = useState("K-01");
+
   return (
-    <div>
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold" style={{ color: NAVY }}>Kiosko — Sales Enablement App</h2>
-        <p className="text-sm text-gray-500">10 pantallas • React Native • Mapa interactivo GIS + Cotizador</p>
+    <div className="flex flex-col items-center gap-6">
+      <div className="screen-fade" key={screen + deviceType}>
+        {screen === "K-01" && <MapaInteractivo onNavigate={setScreen} deviceType={deviceType} />}
+        {screen === "K-02" && <SelectorCapas onNavigate={setScreen} deviceType={deviceType} />}
+        {screen === "K-03" && <PopupLote onNavigate={setScreen} deviceType={deviceType} />}
+        {screen === "K-04" && <DetalleLote onNavigate={setScreen} deviceType={deviceType} />}
+        {screen === "K-05" && <VisorPDF onNavigate={setScreen} deviceType={deviceType} />}
+        {screen === "K-06" && <CotizacionDatos onNavigate={setScreen} deviceType={deviceType} />}
+        {screen === "K-07" && <CotizacionConfirm onNavigate={setScreen} deviceType={deviceType} />}
+        {screen === "K-08" && <ListadoInventario onNavigate={setScreen} deviceType={deviceType} />}
+        {screen === "K-09" && <Amenidades onNavigate={setScreen} deviceType={deviceType} />}
+        {screen === "K-10" && <OfflineKiosko onNavigate={setScreen} deviceType={deviceType} />}
       </div>
-      <div className="flex gap-8 overflow-x-auto pb-6" style={{ scrollbarWidth: "thin" }}>
-        <MapaInteractivo />
-        <SelectorCapas />
-        <PopupLote />
-        <DetalleLote />
-        <VisorPDF />
-        <CotizacionDatos />
-        <CotizacionConfirm />
-        <ListadoInventario />
-        <Amenidades />
-        <OfflineKiosko />
+      <div className="screen-strip">
+        {screens.map(s => (
+          <button
+            key={s.id}
+            onClick={() => setScreen(s.id)}
+            className={`screen-strip-pill ${screen === s.id ? "active" : ""}`}
+          >
+            {s.id}
+          </button>
+        ))}
       </div>
     </div>
   );

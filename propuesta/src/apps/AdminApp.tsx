@@ -9,6 +9,7 @@ import {
   Layers, CheckCircle2, AlertTriangle, Clock, Database, ArrowUpDown,
   Wifi, WifiOff, Image, Calendar, Activity, PieChart, User
 } from "lucide-react";
+import logoCircle from "../assets/logo-circle.png";
 
 const GOLD = "#B8860B";
 const NAVY = "#1B2A4A";
@@ -16,30 +17,43 @@ const NAVY = "#1B2A4A";
 // Desktop screen wrapper
 function Screen({ children, label, id }: { children: React.ReactNode; label: string; id: string }) {
   return (
-    <div className="flex flex-col items-center gap-2 shrink-0">
-      <div className="w-[820px] min-w-[820px] h-[540px] rounded-lg border border-gray-200 shadow-lg overflow-hidden bg-white">
+    <div className="flex flex-col items-center gap-3 shrink-0">
+      <div className="w-[820px] min-w-[820px] h-[540px] rounded-xl border border-[#E8E0D4] overflow-hidden bg-white"
+        style={{
+          boxShadow: '0 0 0 1px rgba(0,0,0,0.03), 0 4px 6px -1px rgba(0,0,0,0.04), 0 20px 40px -8px rgba(0,0,0,0.08), 0 40px 80px -20px rgba(0,0,0,0.06)',
+          transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'translateY(-4px)';
+          e.currentTarget.style.boxShadow = '0 0 0 1px rgba(0,0,0,0.03), 0 8px 12px -2px rgba(0,0,0,0.05), 0 28px 48px -8px rgba(0,0,0,0.1), 0 48px 88px -20px rgba(0,0,0,0.08)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = '0 0 0 1px rgba(0,0,0,0.03), 0 4px 6px -1px rgba(0,0,0,0.04), 0 20px 40px -8px rgba(0,0,0,0.08), 0 40px 80px -20px rgba(0,0,0,0.06)';
+        }}
+      >
         {children}
       </div>
-      <Badge variant="outline" className="text-xs font-mono">{id}</Badge>
-      <p className="text-sm text-gray-600 font-medium text-center max-w-[600px]">{label}</p>
+      <span className="screen-id">{id}</span>
+      <p className="screen-name max-w-[600px]">{label}</p>
     </div>
   );
 }
 
 // Sidebar component
-function Sidebar({ active = "dashboard" }: { active?: string }) {
+function Sidebar({ active = "dashboard", onNavigate }: { active?: string; onNavigate: (id: string) => void }) {
   const items = [
-    { id: "dashboard", icon: LayoutDashboard, label: "Dashboard" },
-    { id: "gis", icon: Map, label: "GIS Manager" },
-    { id: "content", icon: FileText, label: "Contenido" },
-    { id: "sync", icon: RefreshCw, label: "Sync Ops" },
-    { id: "alerts", icon: Bell, label: "Notificaciones" },
-    { id: "users", icon: Users, label: "Usuarios" },
+    { id: "dashboard", icon: LayoutDashboard, label: "Dashboard", target: "A-02" },
+    { id: "gis", icon: Map, label: "GIS Manager", target: "A-03" },
+    { id: "content", icon: FileText, label: "Contenido", target: "A-06" },
+    { id: "sync", icon: RefreshCw, label: "Sync Ops", target: "A-10" },
+    { id: "alerts", icon: Bell, label: "Notificaciones", target: "A-13" },
+    { id: "users", icon: Users, label: "Usuarios", target: "A-14" },
   ];
   return (
     <div className="w-48 h-full flex flex-col border-r" style={{ backgroundColor: NAVY }}>
       <div className="px-4 py-3 flex items-center gap-2">
-        <div className="w-7 h-7 rounded-full bg-[#B8860B] flex items-center justify-center text-white text-[9px] font-bold">LR</div>
+        <img src={logoCircle} alt="LR" className="w-7 h-7 rounded-full" />
         <div>
           <p className="text-white text-xs font-semibold">Las Riberas</p>
           <p className="text-white/40 text-[9px]">Panel Admin</p>
@@ -47,7 +61,7 @@ function Sidebar({ active = "dashboard" }: { active?: string }) {
       </div>
       <div className="flex-1 py-2 space-y-0.5 px-2">
         {items.map(item => (
-          <button key={item.id} className={`w-full flex items-center gap-2 px-3 py-2 rounded-md text-xs transition ${
+          <button key={item.id} onClick={() => onNavigate(item.target)} className={`w-full flex items-center gap-2 px-3 py-2 rounded-md text-xs transition ${
             active === item.id ? "bg-white/15 text-white" : "text-white/50 hover:text-white/80 hover:bg-white/5"
           }`}>
             <item.icon className="w-3.5 h-3.5" />
@@ -64,7 +78,7 @@ function Sidebar({ active = "dashboard" }: { active?: string }) {
             <p className="text-white text-[10px] font-medium truncate">Admin Principal</p>
             <p className="text-white/40 text-[9px]">Super Admin</p>
           </div>
-          <LogOut className="w-3 h-3 text-white/40" />
+          <LogOut className="w-3 h-3 text-white/40 cursor-pointer hover:text-white/80 transition" onClick={() => onNavigate("A-01")} />
         </div>
       </div>
     </div>
@@ -88,13 +102,13 @@ function Topbar({ title }: { title: string }) {
 }
 
 // A-01: Login
-function LoginScreen() {
+function LoginScreen({ onNavigate }: { onNavigate: (id: string) => void }) {
   return (
     <Screen label="Login — Autenticación MFA" id="A-01">
       <div className="h-full flex">
         {/* Left panel */}
         <div className="w-1/2 h-full flex flex-col items-center justify-center p-8" style={{ backgroundColor: NAVY }}>
-          <div className="w-16 h-16 rounded-full bg-[#B8860B] flex items-center justify-center text-white text-xl font-bold mb-4">LR</div>
+          <img src={logoCircle} alt="Las Riberas" className="w-16 h-16 rounded-full mb-4" />
           <h1 className="text-white text-xl font-light tracking-[0.3em] mb-1">LAS RIBERAS</h1>
           <p className="text-white/40 text-xs tracking-wider">Panel de Administración</p>
         </div>
@@ -114,7 +128,7 @@ function LoginScreen() {
                   <Lock className="w-3 h-3" /> ••••••••
                 </div>
               </div>
-              <Button className="w-full h-9 text-xs font-medium" style={{ backgroundColor: GOLD }}>Ingresar</Button>
+              <Button className="w-full h-9 text-xs font-medium" style={{ backgroundColor: GOLD }} onClick={() => onNavigate("A-02")}>Ingresar</Button>
               <div className="text-center">
                 <p className="text-[10px] text-gray-400">Autenticación de dos factores habilitada</p>
               </div>
@@ -127,7 +141,7 @@ function LoginScreen() {
 }
 
 // A-02: Dashboard
-function DashboardScreen() {
+function DashboardScreen({ onNavigate }: { onNavigate: (id: string) => void }) {
   const stats = [
     { label: "Lotes Disponibles", value: "24", change: "-2", icon: Map, color: "emerald" },
     { label: "Cotizaciones Hoy", value: "8", change: "+3", icon: FileText, color: "blue" },
@@ -137,7 +151,7 @@ function DashboardScreen() {
   return (
     <Screen label="Dashboard — KPIs y actividad reciente" id="A-02">
       <div className="h-full flex">
-        <Sidebar active="dashboard" />
+        <Sidebar active="dashboard" onNavigate={onNavigate} />
         <div className="flex-1 flex flex-col">
           <Topbar title="Dashboard" />
           <div className="flex-1 overflow-auto p-4 bg-gray-50/50">
@@ -238,7 +252,7 @@ function DashboardScreen() {
 }
 
 // A-03: GIS Manager — Listado
-function GISList() {
+function GISList({ onNavigate }: { onNavigate: (id: string) => void }) {
   const layers = [
     { name: "Lotes Residenciales", format: "SHP", size: "2.4 MB", date: "12 Mar", status: "active" },
     { name: "Topografía v2", format: "KMZ", size: "8.1 MB", date: "11 Mar", status: "active" },
@@ -249,7 +263,7 @@ function GISList() {
   return (
     <Screen label="GIS Manager — Listado de capas" id="A-03">
       <div className="h-full flex">
-        <Sidebar active="gis" />
+        <Sidebar active="gis" onNavigate={onNavigate} />
         <div className="flex-1 flex flex-col">
           <Topbar title="GIS Manager" />
           <div className="flex-1 overflow-auto p-4 bg-gray-50/50">
@@ -263,7 +277,7 @@ function GISList() {
                   <Filter className="w-3 h-3" /> Filtrar
                 </Button>
               </div>
-              <Button size="sm" className="h-8 text-xs gap-1" style={{ backgroundColor: GOLD }}>
+              <Button size="sm" className="h-8 text-xs gap-1" style={{ backgroundColor: GOLD }} onClick={() => onNavigate("A-04")}>
                 <Upload className="w-3 h-3" /> Subir Capa
               </Button>
             </div>
@@ -299,7 +313,7 @@ function GISList() {
                         </td>
                         <td className="p-2.5 text-right">
                           <div className="flex items-center justify-end gap-1">
-                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0"><Eye className="w-3 h-3 text-gray-400" /></Button>
+                            <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={() => onNavigate("A-05")}><Eye className="w-3 h-3 text-gray-400" /></Button>
                             <Button variant="ghost" size="sm" className="h-6 w-6 p-0"><Edit3 className="w-3 h-3 text-gray-400" /></Button>
                             <Button variant="ghost" size="sm" className="h-6 w-6 p-0"><Trash2 className="w-3 h-3 text-red-400" /></Button>
                           </div>
@@ -318,11 +332,11 @@ function GISList() {
 }
 
 // A-04: GIS Upload
-function GISUpload() {
+function GISUpload({ onNavigate }: { onNavigate: (id: string) => void }) {
   return (
     <Screen label="GIS — Subida y validación de capa" id="A-04">
       <div className="h-full flex">
-        <Sidebar active="gis" />
+        <Sidebar active="gis" onNavigate={onNavigate} />
         <div className="flex-1 flex flex-col">
           <Topbar title="Subir Capa GIS" />
           <div className="flex-1 overflow-auto p-4 bg-gray-50/50">
@@ -394,11 +408,11 @@ function GISUpload() {
 }
 
 // A-05: GIS Preview
-function GISPreview() {
+function GISPreview({ onNavigate }: { onNavigate: (id: string) => void }) {
   return (
     <Screen label="GIS — Vista previa de capa" id="A-05">
       <div className="h-full flex">
-        <Sidebar active="gis" />
+        <Sidebar active="gis" onNavigate={onNavigate} />
         <div className="flex-1 flex flex-col">
           <Topbar title="Vista Previa — Lotes Residenciales" />
           <div className="flex-1 overflow-auto p-4 bg-gray-50/50">
@@ -458,21 +472,41 @@ function GISPreview() {
   );
 }
 
+// Content sub-tabs component
+function ContentTabs({ active, onNavigate }: { active: string; onNavigate: (id: string) => void }) {
+  const tabs = [
+    { id: "playlists", label: "Playlists", target: "A-06" },
+    { id: "sections", label: "Secciones", target: "A-07" },
+    { id: "events", label: "Eventos", target: "A-08" },
+    { id: "media", label: "Medios", target: "A-09" },
+  ];
+  return (
+    <div className="flex gap-2 mb-3">
+      {tabs.map(t => (
+        <Badge
+          key={t.id}
+          className={`text-[10px] cursor-pointer ${t.id === active ? "" : "bg-transparent border border-gray-200 text-gray-500 hover:bg-gray-50"}`}
+          style={t.id === active ? { backgroundColor: NAVY } : {}}
+          onClick={() => onNavigate(t.target)}
+        >
+          {t.label}
+        </Badge>
+      ))}
+    </div>
+  );
+}
+
 // A-06: Content Manager — Playlist
-function ContentPlaylist() {
+function ContentPlaylist({ onNavigate }: { onNavigate: (id: string) => void }) {
   return (
     <Screen label="Contenido — Gestión de playlists" id="A-06">
       <div className="h-full flex">
-        <Sidebar active="content" />
+        <Sidebar active="content" onNavigate={onNavigate} />
         <div className="flex-1 flex flex-col">
           <Topbar title="Gestión de Contenido" />
           <div className="flex-1 overflow-auto p-4 bg-gray-50/50">
             <div className="flex items-center justify-between mb-3">
-              <div className="flex gap-2">
-                <Badge className="text-[10px]" style={{ backgroundColor: NAVY }}>Playlists</Badge>
-                <Badge variant="outline" className="text-[10px] text-gray-500">Secciones</Badge>
-                <Badge variant="outline" className="text-[10px] text-gray-500">Eventos</Badge>
-              </div>
+              <ContentTabs active="playlists" onNavigate={onNavigate} />
               <Button size="sm" className="h-8 text-xs gap-1" style={{ backgroundColor: GOLD }}>
                 <Plus className="w-3 h-3" /> Nueva Playlist
               </Button>
@@ -521,14 +555,15 @@ function ContentPlaylist() {
 }
 
 // A-07: Content — Secciones
-function ContentSections() {
+function ContentSections({ onNavigate }: { onNavigate: (id: string) => void }) {
   return (
     <Screen label="Contenido — Editor de secciones" id="A-07">
       <div className="h-full flex">
-        <Sidebar active="content" />
+        <Sidebar active="content" onNavigate={onNavigate} />
         <div className="flex-1 flex flex-col">
           <Topbar title="Secciones — Desarrollo" />
           <div className="flex-1 overflow-auto p-4 bg-gray-50/50">
+            <ContentTabs active="sections" onNavigate={onNavigate} />
             <div className="grid grid-cols-3 gap-4">
               <div className="col-span-2">
                 <Card className="border-0 shadow-sm">
@@ -610,18 +645,16 @@ function ContentSections() {
 }
 
 // A-08: Content — Eventos
-function ContentEvents() {
+function ContentEvents({ onNavigate }: { onNavigate: (id: string) => void }) {
   return (
     <Screen label="Contenido — Calendario de eventos" id="A-08">
       <div className="h-full flex">
-        <Sidebar active="content" />
+        <Sidebar active="content" onNavigate={onNavigate} />
         <div className="flex-1 flex flex-col">
           <Topbar title="Eventos" />
           <div className="flex-1 overflow-auto p-4 bg-gray-50/50">
             <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <Button variant="outline" size="sm" className="h-7 text-[10px]">← Mar 2026 →</Button>
-              </div>
+              <ContentTabs active="events" onNavigate={onNavigate} />
               <Button size="sm" className="h-8 text-xs gap-1" style={{ backgroundColor: GOLD }}>
                 <Plus className="w-3 h-3" /> Nuevo Evento
               </Button>
@@ -662,21 +695,16 @@ function ContentEvents() {
 }
 
 // A-09: Content — Media Library
-function ContentMedia() {
+function ContentMedia({ onNavigate }: { onNavigate: (id: string) => void }) {
   return (
     <Screen label="Contenido — Biblioteca de medios" id="A-09">
       <div className="h-full flex">
-        <Sidebar active="content" />
+        <Sidebar active="content" onNavigate={onNavigate} />
         <div className="flex-1 flex flex-col">
           <Topbar title="Biblioteca de Medios" />
           <div className="flex-1 overflow-auto p-4 bg-gray-50/50">
             <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <Badge className="text-[10px]" style={{ backgroundColor: NAVY }}>Todos</Badge>
-                <Badge variant="outline" className="text-[10px] text-gray-500">Videos</Badge>
-                <Badge variant="outline" className="text-[10px] text-gray-500">Imágenes</Badge>
-                <Badge variant="outline" className="text-[10px] text-gray-500">PDFs</Badge>
-              </div>
+              <ContentTabs active="media" onNavigate={onNavigate} />
               <Button size="sm" className="h-8 text-xs gap-1" style={{ backgroundColor: GOLD }}>
                 <Upload className="w-3 h-3" /> Subir
               </Button>
@@ -720,15 +748,39 @@ function ContentMedia() {
   );
 }
 
+// Sync sub-tabs
+function SyncTabs({ active, onNavigate }: { active: string; onNavigate: (id: string) => void }) {
+  const tabs = [
+    { id: "dashboard", label: "Dashboard", target: "A-10" },
+    { id: "mapping", label: "Mapeo", target: "A-11" },
+    { id: "devices", label: "Dispositivos", target: "A-12" },
+  ];
+  return (
+    <div className="flex gap-2 mb-3">
+      {tabs.map(t => (
+        <Badge
+          key={t.id}
+          className={`text-[10px] cursor-pointer ${t.id === active ? "" : "bg-transparent border border-gray-200 text-gray-500 hover:bg-gray-50"}`}
+          style={t.id === active ? { backgroundColor: NAVY } : {}}
+          onClick={() => onNavigate(t.target)}
+        >
+          {t.label}
+        </Badge>
+      ))}
+    </div>
+  );
+}
+
 // A-10: Sync — Dashboard
-function SyncDashboard() {
+function SyncDashboard({ onNavigate }: { onNavigate: (id: string) => void }) {
   return (
     <Screen label="Sync Ops — Estado de sincronización" id="A-10">
       <div className="h-full flex">
-        <Sidebar active="sync" />
+        <Sidebar active="sync" onNavigate={onNavigate} />
         <div className="flex-1 flex flex-col">
           <Topbar title="Sync Operations" />
           <div className="flex-1 overflow-auto p-4 bg-gray-50/50">
+            <SyncTabs active="dashboard" onNavigate={onNavigate} />
             {/* Sync status cards */}
             <div className="grid grid-cols-3 gap-3 mb-4">
               {[
@@ -801,14 +853,15 @@ function SyncDashboard() {
 }
 
 // A-11: Sync — HubSpot Mapping
-function SyncMapping() {
+function SyncMapping({ onNavigate }: { onNavigate: (id: string) => void }) {
   return (
     <Screen label="Sync — Mapeo de campos HubSpot" id="A-11">
       <div className="h-full flex">
-        <Sidebar active="sync" />
+        <Sidebar active="sync" onNavigate={onNavigate} />
         <div className="flex-1 flex flex-col">
           <Topbar title="Mapeo de Campos — HubSpot" />
           <div className="flex-1 overflow-auto p-4 bg-gray-50/50">
+            <SyncTabs active="mapping" onNavigate={onNavigate} />
             <Card className="border-0 shadow-sm">
               <CardContent className="p-0">
                 <table className="w-full text-xs">
@@ -859,14 +912,15 @@ function SyncMapping() {
 }
 
 // A-12: Sync — Device Status
-function SyncDevices() {
+function SyncDevices({ onNavigate }: { onNavigate: (id: string) => void }) {
   return (
     <Screen label="Sync — Estado de dispositivos" id="A-12">
       <div className="h-full flex">
-        <Sidebar active="sync" />
+        <Sidebar active="sync" onNavigate={onNavigate} />
         <div className="flex-1 flex flex-col">
           <Topbar title="Dispositivos Conectados" />
           <div className="flex-1 overflow-auto p-4 bg-gray-50/50">
+            <SyncTabs active="devices" onNavigate={onNavigate} />
             <div className="grid grid-cols-2 gap-3">
               {[
                 { name: "Pantalla Lobby", type: "Pantalla", status: "online", lastPing: "Hace 2 min", version: "1.2.0", cache: "92%" },
@@ -916,11 +970,11 @@ function SyncDevices() {
 }
 
 // A-13: Notificaciones
-function NotificationsScreen() {
+function NotificationsScreen({ onNavigate }: { onNavigate: (id: string) => void }) {
   return (
     <Screen label="Notificaciones — Centro de alertas" id="A-13">
       <div className="h-full flex">
-        <Sidebar active="alerts" />
+        <Sidebar active="alerts" onNavigate={onNavigate} />
         <div className="flex-1 flex flex-col">
           <Topbar title="Notificaciones" />
           <div className="flex-1 overflow-auto p-4 bg-gray-50/50">
@@ -970,11 +1024,11 @@ function NotificationsScreen() {
 }
 
 // A-14: Gestión de Usuarios
-function UsersScreen() {
+function UsersScreen({ onNavigate }: { onNavigate: (id: string) => void }) {
   return (
     <Screen label="Usuarios — Roles y permisos" id="A-14">
       <div className="h-full flex">
-        <Sidebar active="users" />
+        <Sidebar active="users" onNavigate={onNavigate} />
         <div className="flex-1 flex flex-col">
           <Topbar title="Gestión de Usuarios" />
           <div className="flex-1 overflow-auto p-4 bg-gray-50/50">
@@ -1049,29 +1103,55 @@ function UsersScreen() {
   );
 }
 
+const screens = [
+  { id: "A-01", label: "Login" },
+  { id: "A-02", label: "Dashboard" },
+  { id: "A-03", label: "GIS List" },
+  { id: "A-04", label: "GIS Upload" },
+  { id: "A-05", label: "GIS Preview" },
+  { id: "A-06", label: "Playlists" },
+  { id: "A-07", label: "Secciones" },
+  { id: "A-08", label: "Eventos" },
+  { id: "A-09", label: "Medios" },
+  { id: "A-10", label: "Sync" },
+  { id: "A-11", label: "Mapeo" },
+  { id: "A-12", label: "Devices" },
+  { id: "A-13", label: "Alertas" },
+  { id: "A-14", label: "Usuarios" },
+];
+
 // Main export
 export function AdminApp() {
+  const [screen, setScreen] = useState("A-01");
+
   return (
-    <div>
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold" style={{ color: NAVY }}>Panel Administrativo — Web App</h2>
-        <p className="text-sm text-gray-500">14 pantallas • React + TypeScript • Dashboard, GIS, Contenido, Sync, Usuarios</p>
+    <div className="flex flex-col items-center gap-6">
+      <div className="screen-fade" key={screen}>
+        {screen === "A-01" && <LoginScreen onNavigate={setScreen} />}
+        {screen === "A-02" && <DashboardScreen onNavigate={setScreen} />}
+        {screen === "A-03" && <GISList onNavigate={setScreen} />}
+        {screen === "A-04" && <GISUpload onNavigate={setScreen} />}
+        {screen === "A-05" && <GISPreview onNavigate={setScreen} />}
+        {screen === "A-06" && <ContentPlaylist onNavigate={setScreen} />}
+        {screen === "A-07" && <ContentSections onNavigate={setScreen} />}
+        {screen === "A-08" && <ContentEvents onNavigate={setScreen} />}
+        {screen === "A-09" && <ContentMedia onNavigate={setScreen} />}
+        {screen === "A-10" && <SyncDashboard onNavigate={setScreen} />}
+        {screen === "A-11" && <SyncMapping onNavigate={setScreen} />}
+        {screen === "A-12" && <SyncDevices onNavigate={setScreen} />}
+        {screen === "A-13" && <NotificationsScreen onNavigate={setScreen} />}
+        {screen === "A-14" && <UsersScreen onNavigate={setScreen} />}
       </div>
-      <div className="flex gap-8 overflow-x-auto pb-6" style={{ scrollbarWidth: "thin" }}>
-        <LoginScreen />
-        <DashboardScreen />
-        <GISList />
-        <GISUpload />
-        <GISPreview />
-        <ContentPlaylist />
-        <ContentSections />
-        <ContentEvents />
-        <ContentMedia />
-        <SyncDashboard />
-        <SyncMapping />
-        <SyncDevices />
-        <NotificationsScreen />
-        <UsersScreen />
+      <div className="screen-strip">
+        {screens.map(s => (
+          <button
+            key={s.id}
+            onClick={() => setScreen(s.id)}
+            className={`screen-strip-pill ${screen === s.id ? "active" : ""}`}
+          >
+            {s.id}
+          </button>
+        ))}
       </div>
     </div>
   );

@@ -3,20 +3,25 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Play, Menu, Home, Building2, Trees, UtensilsCrossed, Calendar, ChevronRight, ChevronLeft, Wifi, WifiOff, MapPin, Star, X, Image } from "lucide-react";
+import type { DeviceType } from "../App";
+import logoCircle from "../assets/logo-circle.png";
 
 const GOLD = "#B8860B";
 const NAVY = "#1B2A4A";
 
-// Phone wrapper
-function Phone({ children, label, id }: { children: React.ReactNode; label: string; id: string }) {
+// Device wrapper
+function DeviceFrame({ children, label, id, deviceType = "phone" }: { children: React.ReactNode; label: string; id: string; deviceType?: DeviceType }) {
+  const frameClass = deviceType === "tablet-h" ? "tablet-h-frame" : deviceType === "tablet-v" ? "tablet-v-frame" : "phone-frame";
   return (
-    <div className="flex flex-col items-center gap-2">
-      <div className="phone-frame">
-        <div className="phone-notch" />
-        <div className="phone-content bg-white">{children}</div>
+    <div className="flex flex-col items-center gap-3">
+      <div className={`device-frame ${frameClass}`}>
+        {deviceType === "phone" && <div className="phone-notch" />}
+        {deviceType === "tablet-v" && <div className="tablet-v-camera" />}
+        {deviceType === "tablet-h" && <div className="tablet-h-camera" />}
+        <div className="device-content bg-white">{children}</div>
       </div>
-      <Badge variant="outline" className="text-xs font-mono">{id}</Badge>
-      <p className="text-sm text-gray-600 font-medium text-center max-w-[300px]">{label}</p>
+      <span className="screen-id">{id}</span>
+      <p className="screen-name">{label}</p>
     </div>
   );
 }
@@ -37,9 +42,9 @@ function StatusBar({ light = false }: { light?: boolean }) {
 }
 
 // P-01: Idle Mode
-function IdleMode() {
+function IdleMode({ onNavigate, deviceType }: { onNavigate: (id: string) => void; deviceType: DeviceType }) {
   return (
-    <Phone label="Idle Mode — Playlist full-screen" id="P-01">
+    <DeviceFrame label="Idle Mode — Playlist full-screen" id="P-01" deviceType={deviceType}>
       <div className="h-full relative bg-gradient-to-b from-[#1B2A4A] to-[#0a1628]">
         <StatusBar light />
         <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -53,17 +58,17 @@ function IdleMode() {
               <div key={i} className={`w-1.5 h-1.5 rounded-full ${i===1 ? "bg-[#B8860B]" : "bg-white/30"}`} />
             ))}
           </div>
-          <p className="absolute bottom-12 text-white/30 text-[10px]">Toca para volver al menu</p>
+          <p onClick={() => onNavigate("P-03")} className="absolute bottom-12 text-white/30 text-[10px] cursor-pointer hover:text-white/60 transition">Toca para volver al menu</p>
         </div>
       </div>
-    </Phone>
+    </DeviceFrame>
   );
 }
 
 // P-02: Fallback Video
-function FallbackVideo() {
+function FallbackVideo({ onNavigate, deviceType }: { onNavigate: (id: string) => void; deviceType: DeviceType }) {
   return (
-    <Phone label="Fallback — Video backup" id="P-02">
+    <DeviceFrame label="Fallback — Video backup" id="P-02" deviceType={deviceType}>
       <div className="h-full relative bg-black">
         <StatusBar light />
         <div className="absolute inset-0 flex flex-col items-center justify-center">
@@ -77,31 +82,31 @@ function FallbackVideo() {
           <div className="absolute bottom-32 left-6 right-6 bg-yellow-500/20 border border-yellow-500/40 rounded-lg p-3">
             <p className="text-yellow-300 text-[10px] text-center">Playlist vacia o formato no soportado. Alerta enviada al Panel Admin.</p>
           </div>
-          <p className="absolute bottom-12 text-white/30 text-[10px]">Toca para volver al menu</p>
+          <p onClick={() => onNavigate("P-03")} className="absolute bottom-12 text-white/30 text-[10px] cursor-pointer hover:text-white/60 transition">Toca para volver al menu</p>
         </div>
       </div>
-    </Phone>
+    </DeviceFrame>
   );
 }
 
 // P-03: Home / Menu Principal
-function HomeMenu() {
+function HomeMenu({ onNavigate, deviceType }: { onNavigate: (id: string) => void; deviceType: DeviceType }) {
   const sections = [
-    { icon: Building2, label: "Desarrollo", color: "#B8860B" },
-    { icon: MapPin, label: "Bienes Raices", color: "#2D6A4F" },
-    { icon: Star, label: "Club", color: "#1B2A4A" },
-    { icon: UtensilsCrossed, label: "Maderas", color: "#8B4513" },
-    { icon: Trees, label: "Nona", color: "#556B2F" },
-    { icon: Calendar, label: "Calendario", color: "#6B4C8A" },
+    { icon: Building2, label: "Desarrollo", color: "#B8860B", target: "P-04" },
+    { icon: MapPin, label: "Bienes Raices", color: "#2D6A4F", target: "P-05" },
+    { icon: Star, label: "Club", color: "#1B2A4A", target: "P-07" },
+    { icon: UtensilsCrossed, label: "Maderas", color: "#8B4513", target: "P-08" },
+    { icon: Trees, label: "Nona", color: "#556B2F", target: "P-09" },
+    { icon: Calendar, label: "Calendario", color: "#6B4C8A", target: "P-10" },
   ];
   return (
-    <Phone label="Home — Menu principal" id="P-03">
+    <DeviceFrame label="Home — Menu principal" id="P-03" deviceType={deviceType}>
       <StatusBar />
       {/* Banner */}
       <div className="h-44 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-[#1B2A4A] to-[#2D4A7A]" />
         <div className="absolute inset-0 flex items-center justify-center flex-col">
-          <div className="w-10 h-10 rounded-full bg-[#B8860B] flex items-center justify-center text-white text-xs font-bold mb-2">LR</div>
+          <img src={logoCircle} alt="Las Riberas" className="w-10 h-10 rounded-full mb-2" />
           <p className="text-white text-lg font-light tracking-[0.2em]">LAS RIBERAS</p>
           <p className="text-white/50 text-[10px] mt-1 tracking-wider">VIVE LA EXPERIENCIA</p>
         </div>
@@ -110,7 +115,7 @@ function HomeMenu() {
       <div className="p-4">
         <div className="grid grid-cols-2 gap-3">
           {sections.map((s, i) => (
-            <button key={i} className="flex flex-col items-center gap-2 p-5 rounded-xl bg-gray-50 hover:bg-gray-100 transition border border-gray-100">
+            <button key={i} onClick={() => onNavigate(s.target)} className="flex flex-col items-center gap-2 p-5 rounded-xl bg-gray-50 hover:bg-gray-100 transition border border-gray-100">
               <div className="w-11 h-11 rounded-full flex items-center justify-center" style={{ backgroundColor: s.color + "15" }}>
                 <s.icon className="w-5 h-5" style={{ color: s.color }} />
               </div>
@@ -126,17 +131,17 @@ function HomeMenu() {
           <Menu className="w-5 h-5 text-gray-400" />
         </div>
       </div>
-    </Phone>
+    </DeviceFrame>
   );
 }
 
 // P-04: Seccion Desarrollo
-function SeccionDesarrollo() {
+function SeccionDesarrollo({ onNavigate, deviceType }: { onNavigate: (id: string) => void; deviceType: DeviceType }) {
   return (
-    <Phone label="Seccion Desarrollo" id="P-04">
+    <DeviceFrame label="Seccion Desarrollo" id="P-04" deviceType={deviceType}>
       <StatusBar />
       <div className="px-4 py-3 flex items-center gap-3 border-b">
-        <ChevronLeft className="w-5 h-5 text-gray-500" />
+        <ChevronLeft className="w-5 h-5 text-gray-500 cursor-pointer hover:text-gray-800 transition" onClick={() => onNavigate("P-03")} />
         <span className="text-sm font-semibold text-[#1B2A4A]">Desarrollo</span>
       </div>
       <div className="h-48 bg-gradient-to-br from-[#1B2A4A] to-[#2D4A7A] flex items-end p-5">
@@ -159,14 +164,14 @@ function SeccionDesarrollo() {
         <div className="bg-gray-100 rounded-xl h-32 flex items-center justify-center">
           <Image className="w-8 h-8 text-gray-300" />
         </div>
-        <Button className="w-full bg-[#B8860B] hover:bg-[#9a7209] text-white">DESCUBRE MAS</Button>
+        <Button onClick={() => onNavigate("P-05")} className="w-full bg-[#B8860B] hover:bg-[#9a7209] text-white">DESCUBRE MAS</Button>
       </div>
-    </Phone>
+    </DeviceFrame>
   );
 }
 
 // P-05: Bienes Raices Listado
-function BienesRaicesListado() {
+function BienesRaicesListado({ onNavigate, deviceType }: { onNavigate: (id: string) => void; deviceType: DeviceType }) {
   const lots = [
     { id: "L-101", section: "Sec. A", status: "Disponible", price: "$3,500,000", color: "bg-emerald-500" },
     { id: "L-102", section: "Sec. A", status: "Apartado", price: "$3,800,000", color: "bg-yellow-500" },
@@ -176,10 +181,10 @@ function BienesRaicesListado() {
     { id: "V-202", section: "Villas", status: "Apartado", price: "$9,200,000", color: "bg-yellow-500" },
   ];
   return (
-    <Phone label="Bienes Raices — Inventario" id="P-05">
+    <DeviceFrame label="Bienes Raices — Inventario" id="P-05" deviceType={deviceType}>
       <StatusBar />
       <div className="px-4 py-3 flex items-center gap-3 border-b">
-        <ChevronLeft className="w-5 h-5 text-gray-500" />
+        <ChevronLeft className="w-5 h-5 text-gray-500 cursor-pointer hover:text-gray-800 transition" onClick={() => onNavigate("P-03")} />
         <span className="text-sm font-semibold text-[#1B2A4A]">Bienes Raices</span>
       </div>
       {/* Filters */}
@@ -191,7 +196,7 @@ function BienesRaicesListado() {
       {/* List */}
       <div className="px-4 py-2 space-y-2">
         {lots.map((l, i) => (
-          <div key={i} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+          <div key={i} onClick={() => onNavigate("P-06")} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100 transition">
             <div className="flex items-center gap-3">
               <div className={`w-2.5 h-2.5 rounded-full ${l.color}`} />
               <div>
@@ -208,17 +213,17 @@ function BienesRaicesListado() {
         ))}
       </div>
       <p className="text-center text-[10px] text-gray-400 mt-2">Sincronizado con HubSpot en tiempo real</p>
-    </Phone>
+    </DeviceFrame>
   );
 }
 
 // P-06: Bienes Raices Detalle
-function BienesRaicesDetalle() {
+function BienesRaicesDetalle({ onNavigate, deviceType }: { onNavigate: (id: string) => void; deviceType: DeviceType }) {
   return (
-    <Phone label="Detalle de Lote/Casa" id="P-06">
+    <DeviceFrame label="Detalle de Lote/Casa" id="P-06" deviceType={deviceType}>
       <StatusBar />
       <div className="px-4 py-3 flex items-center gap-3 border-b">
-        <ChevronLeft className="w-5 h-5 text-gray-500" />
+        <ChevronLeft className="w-5 h-5 text-gray-500 cursor-pointer hover:text-gray-800 transition" onClick={() => onNavigate("P-05")} />
         <span className="text-sm font-semibold text-[#1B2A4A]">Lote L-101</span>
       </div>
       <div className="h-40 bg-gradient-to-br from-[#2D6A4F]/20 to-[#2D6A4F]/5 flex items-center justify-center">
@@ -250,17 +255,17 @@ function BienesRaicesDetalle() {
           <Button variant="outline" className="flex-1 border-[#1B2A4A] text-[#1B2A4A] text-xs">COTIZAR</Button>
         </div>
       </div>
-    </Phone>
+    </DeviceFrame>
   );
 }
 
 // P-07: Seccion Club
-function SeccionClub() {
+function SeccionClub({ onNavigate, deviceType }: { onNavigate: (id: string) => void; deviceType: DeviceType }) {
   return (
-    <Phone label="Seccion Club" id="P-07">
+    <DeviceFrame label="Seccion Club" id="P-07" deviceType={deviceType}>
       <StatusBar />
       <div className="px-4 py-3 flex items-center gap-3 border-b">
-        <ChevronLeft className="w-5 h-5 text-gray-500" />
+        <ChevronLeft className="w-5 h-5 text-gray-500 cursor-pointer hover:text-gray-800 transition" onClick={() => onNavigate("P-03")} />
         <span className="text-sm font-semibold text-[#1B2A4A]">Club</span>
       </div>
       <div className="h-44 bg-gradient-to-br from-[#1B2A4A] to-[#2D4A7A] flex items-end p-5">
@@ -285,18 +290,18 @@ function SeccionClub() {
           </div>
         ))}
       </div>
-    </Phone>
+    </DeviceFrame>
   );
 }
 
 // P-08: Maderas
-function MaderasScreen() {
+function MaderasScreen({ onNavigate, deviceType }: { onNavigate: (id: string) => void; deviceType: DeviceType }) {
   return (
-    <Phone label="Maderas — OpenTable" id="P-08">
+    <DeviceFrame label="Maderas — OpenTable" id="P-08" deviceType={deviceType}>
       <StatusBar />
       <div className="px-4 py-3 flex items-center justify-between border-b">
         <div className="flex items-center gap-3">
-          <ChevronLeft className="w-5 h-5 text-gray-500" />
+          <ChevronLeft className="w-5 h-5 text-gray-500 cursor-pointer hover:text-gray-800 transition" onClick={() => onNavigate("P-03")} />
           <span className="text-sm font-semibold text-[#1B2A4A]">Maderas</span>
         </div>
         <Badge className="bg-[#DA3743] text-white border-0 text-[9px]">OpenTable</Badge>
@@ -324,17 +329,17 @@ function MaderasScreen() {
         </div>
         <Button className="w-full bg-[#DA3743] hover:bg-[#c0303d] text-white">RESERVAR MESA</Button>
       </div>
-    </Phone>
+    </DeviceFrame>
   );
 }
 
 // P-09: Nona
-function NonaScreen() {
+function NonaScreen({ onNavigate, deviceType }: { onNavigate: (id: string) => void; deviceType: DeviceType }) {
   return (
-    <Phone label="Seccion Nona" id="P-09">
+    <DeviceFrame label="Seccion Nona" id="P-09" deviceType={deviceType}>
       <StatusBar />
       <div className="px-4 py-3 flex items-center gap-3 border-b">
-        <ChevronLeft className="w-5 h-5 text-gray-500" />
+        <ChevronLeft className="w-5 h-5 text-gray-500 cursor-pointer hover:text-gray-800 transition" onClick={() => onNavigate("P-03")} />
         <span className="text-sm font-semibold text-[#1B2A4A]">Nona</span>
       </div>
       <div className="h-44 bg-gradient-to-br from-[#556B2F] to-[#3a4a20] flex items-end p-5">
@@ -355,18 +360,18 @@ function NonaScreen() {
         </div>
         <Button className="w-full bg-[#556B2F] hover:bg-[#3a4a20] text-white">CONOCER MAS</Button>
       </div>
-    </Phone>
+    </DeviceFrame>
   );
 }
 
 // P-10: Calendario
-function CalendarioScreen() {
+function CalendarioScreen({ onNavigate, deviceType }: { onNavigate: (id: string) => void; deviceType: DeviceType }) {
   const months = ["Mar", "Abr", "May", "Jun", "Jul", "Ago"];
   return (
-    <Phone label="Calendario mensual" id="P-10">
+    <DeviceFrame label="Calendario mensual" id="P-10" deviceType={deviceType}>
       <StatusBar />
       <div className="px-4 py-3 flex items-center gap-3 border-b">
-        <ChevronLeft className="w-5 h-5 text-gray-500" />
+        <ChevronLeft className="w-5 h-5 text-gray-500 cursor-pointer hover:text-gray-800 transition" onClick={() => onNavigate("P-03")} />
         <span className="text-sm font-semibold text-[#1B2A4A]">Calendario</span>
       </div>
       <div className="p-4">
@@ -377,7 +382,7 @@ function CalendarioScreen() {
         </div>
         <div className="grid grid-cols-2 gap-3">
           {months.map((m, i) => (
-            <div key={i} className="rounded-xl overflow-hidden border border-gray-100 hover:border-[#B8860B] transition cursor-pointer">
+            <div key={i} onClick={() => onNavigate("P-11")} className="rounded-xl overflow-hidden border border-gray-100 hover:border-[#B8860B] transition cursor-pointer">
               <div className={`h-24 ${i === 0 ? "bg-[#B8860B]/10" : "bg-gray-100"} flex items-center justify-center`}>
                 <Calendar className={`w-8 h-8 ${i === 0 ? "text-[#B8860B]" : "text-gray-300"}`} />
               </div>
@@ -389,17 +394,17 @@ function CalendarioScreen() {
           ))}
         </div>
       </div>
-    </Phone>
+    </DeviceFrame>
   );
 }
 
 // P-11: Calendario Detalle
-function CalendarioDetalle() {
+function CalendarioDetalle({ onNavigate, deviceType }: { onNavigate: (id: string) => void; deviceType: DeviceType }) {
   return (
-    <Phone label="Calendario — Detalle" id="P-11">
+    <DeviceFrame label="Calendario — Detalle" id="P-11" deviceType={deviceType}>
       <StatusBar />
       <div className="px-4 py-3 flex items-center gap-3 border-b">
-        <ChevronLeft className="w-5 h-5 text-gray-500" />
+        <ChevronLeft className="w-5 h-5 text-gray-500 cursor-pointer hover:text-gray-800 transition" onClick={() => onNavigate("P-10")} />
         <span className="text-sm font-semibold text-[#1B2A4A]">Marzo 2026</span>
       </div>
       <div className="h-52 bg-gradient-to-br from-[#6B4C8A] to-[#4a3560] flex items-end p-5">
@@ -425,18 +430,18 @@ function CalendarioDetalle() {
         </div>
         <Button className="w-full bg-[#6B4C8A] hover:bg-[#5a3d75] text-white">MAS INFORMACION</Button>
       </div>
-    </Phone>
+    </DeviceFrame>
   );
 }
 
 // P-12: Offline
-function OfflineScreen() {
+function OfflineScreen({ onNavigate, deviceType }: { onNavigate: (id: string) => void; deviceType: DeviceType }) {
   return (
-    <Phone label="Modo Offline" id="P-12">
+    <DeviceFrame label="Modo Offline" id="P-12" deviceType={deviceType}>
       <StatusBar />
       <div className="px-4 py-3 flex items-center justify-between border-b">
         <div className="flex items-center gap-3">
-          <ChevronLeft className="w-5 h-5 text-gray-500" />
+          <ChevronLeft className="w-5 h-5 text-gray-500 cursor-pointer hover:text-gray-800 transition" onClick={() => onNavigate("P-03")} />
           <span className="text-sm font-semibold text-[#1B2A4A]">Las Riberas</span>
         </div>
         <Badge className="bg-orange-500 text-white border-0 text-[9px] gap-1">
@@ -466,30 +471,54 @@ function OfflineScreen() {
           </div>
         </div>
       </div>
-    </Phone>
+    </DeviceFrame>
   );
 }
 
-export function PantallaApp() {
+const screens = [
+  { id: "P-01", label: "Idle" },
+  { id: "P-02", label: "Fallback" },
+  { id: "P-03", label: "Home" },
+  { id: "P-04", label: "Desarrollo" },
+  { id: "P-05", label: "Listado" },
+  { id: "P-06", label: "Detalle" },
+  { id: "P-07", label: "Club" },
+  { id: "P-08", label: "Maderas" },
+  { id: "P-09", label: "Nona" },
+  { id: "P-10", label: "Calendario" },
+  { id: "P-11", label: "Cal. Detalle" },
+  { id: "P-12", label: "Offline" },
+];
+
+export function PantallaApp({ deviceType = "phone" as DeviceType }: { deviceType?: DeviceType }) {
+  const [screen, setScreen] = useState("P-03");
+
   return (
-    <div>
-      <div className="mb-6">
-        <h2 className="text-xl font-bold text-[#1B2A4A]">App Pantalla <span className="text-[#B8860B]">(React Native)</span></h2>
-        <p className="text-sm text-gray-500 mt-1">Digital Signage — 12 pantallas para dispositivos en sitio</p>
+    <div className="flex flex-col items-center gap-6">
+      <div className="screen-fade" key={screen + deviceType}>
+        {screen === "P-01" && <IdleMode onNavigate={setScreen} deviceType={deviceType} />}
+        {screen === "P-02" && <FallbackVideo onNavigate={setScreen} deviceType={deviceType} />}
+        {screen === "P-03" && <HomeMenu onNavigate={setScreen} deviceType={deviceType} />}
+        {screen === "P-04" && <SeccionDesarrollo onNavigate={setScreen} deviceType={deviceType} />}
+        {screen === "P-05" && <BienesRaicesListado onNavigate={setScreen} deviceType={deviceType} />}
+        {screen === "P-06" && <BienesRaicesDetalle onNavigate={setScreen} deviceType={deviceType} />}
+        {screen === "P-07" && <SeccionClub onNavigate={setScreen} deviceType={deviceType} />}
+        {screen === "P-08" && <MaderasScreen onNavigate={setScreen} deviceType={deviceType} />}
+        {screen === "P-09" && <NonaScreen onNavigate={setScreen} deviceType={deviceType} />}
+        {screen === "P-10" && <CalendarioScreen onNavigate={setScreen} deviceType={deviceType} />}
+        {screen === "P-11" && <CalendarioDetalle onNavigate={setScreen} deviceType={deviceType} />}
+        {screen === "P-12" && <OfflineScreen onNavigate={setScreen} deviceType={deviceType} />}
       </div>
-      <div className="flex gap-8 overflow-x-auto pb-8" style={{ scrollSnapType: "x mandatory" }}>
-        <IdleMode />
-        <FallbackVideo />
-        <HomeMenu />
-        <SeccionDesarrollo />
-        <BienesRaicesListado />
-        <BienesRaicesDetalle />
-        <SeccionClub />
-        <MaderasScreen />
-        <NonaScreen />
-        <CalendarioScreen />
-        <CalendarioDetalle />
-        <OfflineScreen />
+      <div className="screen-strip">
+        {screens.map(s => (
+          <button
+            key={s.id}
+            onClick={() => setScreen(s.id)}
+            className={`screen-strip-pill ${screen === s.id ? "active" : ""}`}
+          >
+            {s.id}
+          </button>
+        ))}
       </div>
     </div>
   );
