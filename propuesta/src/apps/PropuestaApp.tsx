@@ -348,20 +348,70 @@ function SecModelo() {
 }
 
 function SecAPIs() {
-  const gateway = [
+  const methodColor: Record<string, string> = {
+    GET: "bg-emerald-500", POST: "bg-blue-500", PUT: "bg-amber-500",
+    PATCH: "bg-amber-500", DELETE: "bg-red-500",
+  };
+
+  const webhooksSync = [
     ["POST", "/webhooks/hubspot", "Receptor webhooks, validacion firma V3"],
-    ["POST", "/api/v1/quotes", "Cotizacion desde Kiosko"],
-    ["GET", "/api/v1/inventory", "Inventario canonico (Panel Admin)"],
     ["POST", "/api/v1/sync/resync", "Forzar resync completo"],
     ["GET", "/api/v1/sync/status", "Estado de sincronizacion"],
     ["GET", "/api/v1/dlq", "Dead-letter queue"],
     ["POST", "/api/v1/dlq/{id}/retry", "Reintento manual DLQ"],
     ["GET", "/health", "Health check"],
   ];
+  const auth = [
+    ["POST", "/api/v1/auth/login", "Inicio de sesion, retorna access + refresh token"],
+    ["POST", "/api/v1/auth/logout", "Invalida sesion y refresh token"],
+    ["POST", "/api/v1/auth/refresh", "Renueva access token con refresh token"],
+    ["POST", "/api/v1/auth/forgot-password", "Solicitud de restablecimiento de contrasena"],
+    ["POST", "/api/v1/auth/reset-password", "Restablece contrasena con token temporal"],
+  ];
+  const users = [
+    ["GET", "/api/v1/users", "Listado de usuarios con paginacion"],
+    ["POST", "/api/v1/users", "Crear usuario con rol asignado"],
+    ["GET", "/api/v1/users/{id}", "Detalle de usuario"],
+    ["PUT", "/api/v1/users/{id}", "Actualizar datos de usuario"],
+    ["DELETE", "/api/v1/users/{id}", "Eliminar usuario"],
+    ["PATCH", "/api/v1/users/{id}/role", "Cambiar rol de usuario"],
+  ];
+  const inventoryQuotes = [
+    ["GET", "/api/v1/inventory", "Inventario canonico con filtros (estatus, seccion, precio)"],
+    ["GET", "/api/v1/inventory/{id}", "Detalle de lote/casa"],
+    ["GET", "/api/v1/inventory/geojson", "Capas GeoJSON para mapa interactivo"],
+    ["POST", "/api/v1/quotes", "Cotizacion desde Kiosko"],
+    ["GET", "/api/v1/quotes", "Listado de cotizaciones (Panel Admin)"],
+    ["GET", "/api/v1/quotes/{id}", "Detalle de cotizacion"],
+  ];
+  const gis = [
+    ["GET", "/api/v1/gis", "Listado de archivos GIS con version y estado"],
+    ["POST", "/api/v1/gis/upload", "Carga Shapefile/KMZ/KML, validacion WGS84"],
+    ["GET", "/api/v1/gis/{id}", "Detalle de archivo GIS"],
+    ["GET", "/api/v1/gis/{id}/versions", "Historial de versiones"],
+    ["POST", "/api/v1/gis/{id}/rollback/{version}", "Rollback a version anterior"],
+    ["DELETE", "/api/v1/gis/{id}", "Eliminar archivo GIS"],
+    ["GET", "/api/v1/gis/{id}/preview", "Preview GeoJSON para mapa web"],
+  ];
+  const assets = [
+    ["GET", "/api/v1/assets", "Listado de assets (PDFs, imagenes)"],
+    ["POST", "/api/v1/assets/upload", "Carga con validacion de formato/peso"],
+    ["GET", "/api/v1/assets/{id}", "Detalle de asset"],
+    ["DELETE", "/api/v1/assets/{id}", "Eliminar asset"],
+    ["GET", "/api/v1/assets/{id}/url", "Presigned URL temporal para descarga"],
+  ];
+  const notifDashboard = [
+    ["GET", "/api/v1/notifications", "Listado de alertas con prioridad"],
+    ["PATCH", "/api/v1/notifications/{id}/read", "Marcar notificacion como leida"],
+    ["GET", "/api/v1/notifications/unread-count", "Contador de no leidas (badge)"],
+    ["GET", "/api/v1/dashboard/metrics", "Metricas clave para dashboard principal"],
+  ];
   const kiosko = [
     ["POST", "/sync/v1/inventory/events", "Deltas canonicos (idempotente)"],
     ["POST", "/sync/v1/inventory/snapshot", "Snapshot completo"],
     ["POST", "/sales/v1/quote", "Solicitud de cotizacion"],
+    ["GET", "/sales/v1/quote/{folio}", "Consultar estado de cotizacion"],
+    ["GET", "/api/v1/amenities", "Informacion de amenidades"],
     ["GET", "/health", "Estado del servicio"],
   ];
 
@@ -374,7 +424,7 @@ function SecAPIs() {
           {rows.map((r, i) => (
             <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-[#FDFBF7]"}>
               <TD>
-                <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold text-white ${r[0] === "GET" ? "bg-emerald-500" : "bg-blue-500"}`}>
+                <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold text-white ${methodColor[r[0]] || "bg-gray-500"}`}>
                   {r[0]}
                 </span>
               </TD>
@@ -390,9 +440,21 @@ function SecAPIs() {
   return (
     <>
       <SectionTitle num="6" title="Especificacion de APIs" />
-      {renderApi("6.1 Gateway API", gateway)}
+      {renderApi("6.1 Gateway API — Webhooks & Sync", webhooksSync)}
       <Divider />
-      {renderApi("6.2 Kiosko API", kiosko)}
+      {renderApi("6.2 Gateway API — Autenticacion", auth)}
+      <Divider />
+      {renderApi("6.3 Gateway API — Usuarios", users)}
+      <Divider />
+      {renderApi("6.4 Gateway API — Inventario & Cotizaciones", inventoryQuotes)}
+      <Divider />
+      {renderApi("6.5 Gateway API — GIS Manager", gis)}
+      <Divider />
+      {renderApi("6.6 Gateway API — Storage / Assets", assets)}
+      <Divider />
+      {renderApi("6.7 Gateway API — Notificaciones & Dashboard", notifDashboard)}
+      <Divider />
+      {renderApi("6.8 Kiosko API", kiosko)}
     </>
   );
 }
@@ -686,6 +748,7 @@ function SecSupuestos() {
     "La decision de infraestructura (proveedor, dominios, certificados) se define antes del despliegue productivo.",
     "El cliente provee assets (imagenes, PDFs de modelos) en formatos estandar.",
     "Definiciones pendientes (modelado HubSpot, diccionario GIS) se resuelven durante Fase 0.",
+    "Herramienta de desarrollo IA: Se utilizara Claude (plan MAX individual) como asistente de desarrollo durante todo el periodo de implementacion (16 semanas). El costo de la suscripcion se incluira como partida adicional en el presupuesto final. (Precio pendiente de agregar.)",
   ];
 
   return (
