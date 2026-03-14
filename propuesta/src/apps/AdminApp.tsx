@@ -45,10 +45,10 @@ function Sidebar({ active = "dashboard", onNavigate }: { active?: string; onNavi
   const items = [
     { id: "dashboard", icon: LayoutDashboard, label: "Dashboard", target: "A-02" },
     { id: "gis", icon: Map, label: "GIS Manager", target: "A-03" },
-    { id: "content", icon: FileText, label: "Contenido", target: "A-06" },
-    { id: "sync", icon: RefreshCw, label: "Sync Ops", target: "A-10" },
-    { id: "alerts", icon: Bell, label: "Notificaciones", target: "A-13" },
-    { id: "users", icon: Users, label: "Usuarios", target: "A-14" },
+    { id: "storage", icon: FileText, label: "Storage PDFs", target: "A-06" },
+    { id: "sync", icon: RefreshCw, label: "Sync Ops", target: "A-07" },
+    { id: "alerts", icon: Bell, label: "Notificaciones", target: "A-10" },
+    { id: "users", icon: Users, label: "Usuarios", target: "A-11" },
   ];
   return (
     <div className="w-48 h-full flex flex-col border-r" style={{ backgroundColor: NAVY }}>
@@ -231,7 +231,7 @@ function DashboardScreen({ onNavigate }: { onNavigate: (id: string) => void }) {
                     { icon: FileText, text: "Nueva cotización COT-2026-0847 — Lote A-12", time: "Hace 5 min", color: "blue" },
                     { icon: RefreshCw, text: "Sync HubSpot completado — 3 deals actualizados", time: "Hace 15 min", color: "emerald" },
                     { icon: Upload, text: "Capa GIS 'Topografía v2' subida por Admin", time: "Hace 1h", color: "purple" },
-                    { icon: AlertTriangle, text: "Pantalla Lobby — offline hace 30 min", time: "Hace 30 min", color: "amber" },
+                    { icon: AlertTriangle, text: "Kiosko Modelo — offline hace 35 min", time: "Hace 35 min", color: "amber" },
                   ].map((a, i) => (
                     <div key={i} className="flex items-center gap-2 py-1.5">
                       <div className={`w-6 h-6 rounded-full bg-${a.color}-100 flex items-center justify-center`}>
@@ -472,271 +472,55 @@ function GISPreview({ onNavigate }: { onNavigate: (id: string) => void }) {
   );
 }
 
-// Content sub-tabs component
-function ContentTabs({ active, onNavigate }: { active: string; onNavigate: (id: string) => void }) {
-  const tabs = [
-    { id: "playlists", label: "Playlists", target: "A-06" },
-    { id: "sections", label: "Secciones", target: "A-07" },
-    { id: "events", label: "Eventos", target: "A-08" },
-    { id: "media", label: "Medios", target: "A-09" },
-  ];
+// A-06: Storage Manager — PDFs
+function StoragePDFs({ onNavigate }: { onNavigate: (id: string) => void }) {
   return (
-    <div className="flex gap-2 mb-3">
-      {tabs.map(t => (
-        <Badge
-          key={t.id}
-          className={`text-[10px] cursor-pointer ${t.id === active ? "" : "bg-transparent border border-gray-200 text-gray-500 hover:bg-gray-50"}`}
-          style={t.id === active ? { backgroundColor: NAVY } : {}}
-          onClick={() => onNavigate(t.target)}
-        >
-          {t.label}
-        </Badge>
-      ))}
-    </div>
-  );
-}
-
-// A-06: Content Manager — Playlist
-function ContentPlaylist({ onNavigate }: { onNavigate: (id: string) => void }) {
-  return (
-    <Screen label="Contenido — Gestión de playlists" id="A-06">
+    <Screen label="Storage — PDFs de modelos inmobiliarios" id="A-06">
       <div className="h-full flex">
-        <Sidebar active="content" onNavigate={onNavigate} />
+        <Sidebar active="storage" onNavigate={onNavigate} />
         <div className="flex-1 flex flex-col">
-          <Topbar title="Gestión de Contenido" />
+          <Topbar title="Storage — PDFs de Modelos" />
           <div className="flex-1 overflow-auto p-4 bg-gray-50/50">
             <div className="flex items-center justify-between mb-3">
-              <ContentTabs active="playlists" onNavigate={onNavigate} />
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 bg-white border rounded-md px-2.5 py-1.5">
+                  <Search className="w-3.5 h-3.5 text-gray-400" />
+                  <span className="text-xs text-gray-400">Buscar PDF...</span>
+                </div>
+                <Button variant="outline" size="sm" className="h-8 text-xs gap-1">
+                  <Filter className="w-3 h-3" /> Filtrar
+                </Button>
+              </div>
               <Button size="sm" className="h-8 text-xs gap-1" style={{ backgroundColor: GOLD }}>
-                <Plus className="w-3 h-3" /> Nueva Playlist
+                <Upload className="w-3 h-3" /> Subir PDF
               </Button>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-3">
               {[
-                { name: "Playlist Principal", items: 5, duration: "12:30", status: "active", assigned: "Lobby" },
-                { name: "Playlist Ventas", items: 3, duration: "8:15", status: "active", assigned: "Sala de Ventas" },
-                { name: "Playlist Eventos", items: 4, duration: "10:00", status: "draft", assigned: "Sin asignar" },
-                { name: "Playlist Nocturna", items: 2, duration: "6:45", status: "active", assigned: "Lobby" },
+                { name: "Modelo Río A — Planta Baja", lote: "Sección Río", size: "3.8 MB", date: "12 Mar", downloads: 24 },
+                { name: "Modelo Río A — Planta Alta", lote: "Sección Río", size: "3.2 MB", date: "12 Mar", downloads: 18 },
+                { name: "Modelo Bosque B", lote: "Sección Bosque", size: "4.1 MB", date: "10 Mar", downloads: 31 },
+                { name: "Modelo Club C — Premium", lote: "Sección Club", size: "5.6 MB", date: "08 Mar", downloads: 42 },
+                { name: "Modelo Lago D", lote: "Sección Lago", size: "3.4 MB", date: "05 Mar", downloads: 15 },
+                { name: "Ficha Técnica General", lote: "Todas las secciones", size: "2.1 MB", date: "01 Mar", downloads: 67 },
               ].map((p, i) => (
-                <Card key={i} className="border-0 shadow-sm">
-                  <CardContent className="p-3">
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <p className="text-xs font-semibold" style={{ color: NAVY }}>{p.name}</p>
-                        <p className="text-[10px] text-gray-500">{p.items} videos • {p.duration} total</p>
-                      </div>
-                      <Badge className={`text-[9px] border-0 ${p.status === "active" ? "bg-emerald-100 text-emerald-700" : "bg-gray-100 text-gray-600"}`}>
-                        {p.status === "active" ? "Activa" : "Borrador"}
-                      </Badge>
-                    </div>
-                    <div className="flex gap-1.5 mb-2">
-                      {[...Array(p.items)].map((_, j) => (
-                        <div key={j} className="w-12 h-8 rounded bg-gray-100 flex items-center justify-center">
-                          <Image className="w-3 h-3 text-gray-300" />
-                        </div>
-                      ))}
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <p className="text-[9px] text-gray-400">Asignada: {p.assigned}</p>
-                      <div className="flex gap-1">
-                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0"><Edit3 className="w-3 h-3 text-gray-400" /></Button>
-                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0"><Eye className="w-3 h-3 text-gray-400" /></Button>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </Screen>
-  );
-}
-
-// A-07: Content — Secciones
-function ContentSections({ onNavigate }: { onNavigate: (id: string) => void }) {
-  return (
-    <Screen label="Contenido — Editor de secciones" id="A-07">
-      <div className="h-full flex">
-        <Sidebar active="content" onNavigate={onNavigate} />
-        <div className="flex-1 flex flex-col">
-          <Topbar title="Secciones — Desarrollo" />
-          <div className="flex-1 overflow-auto p-4 bg-gray-50/50">
-            <ContentTabs active="sections" onNavigate={onNavigate} />
-            <div className="grid grid-cols-3 gap-4">
-              <div className="col-span-2">
-                <Card className="border-0 shadow-sm">
-                  <CardContent className="p-4">
-                    <div className="space-y-3">
-                      <div>
-                        <label className="text-[10px] text-gray-500 font-medium block mb-1">Título de la sección</label>
-                        <div className="border rounded-md px-3 py-2 text-sm font-semibold" style={{ color: NAVY }}>El Desarrollo</div>
-                      </div>
-                      <div>
-                        <label className="text-[10px] text-gray-500 font-medium block mb-1">Subtítulo</label>
-                        <div className="border rounded-md px-3 py-2 text-xs text-gray-600">Un proyecto residencial de clase mundial</div>
-                      </div>
-                      <div>
-                        <label className="text-[10px] text-gray-500 font-medium block mb-1">Descripción</label>
-                        <div className="border rounded-md px-3 py-2 text-xs text-gray-600 h-20">
-                          Las Riberas es un desarrollo residencial premium ubicado en las orillas del río...
-                        </div>
-                      </div>
-                      <div>
-                        <label className="text-[10px] text-gray-500 font-medium block mb-1">Imagen principal</label>
-                        <div className="border-2 border-dashed rounded-lg h-28 flex items-center justify-center bg-gray-50">
-                          <div className="text-center">
-                            <Image className="w-6 h-6 text-gray-300 mx-auto" />
-                            <p className="text-[10px] text-gray-400 mt-1">1920 × 1080 px</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-              <div className="space-y-3">
-                <Card className="border-0 shadow-sm">
-                  <CardHeader className="pb-2 pt-3 px-3">
-                    <CardTitle className="text-xs font-semibold" style={{ color: NAVY }}>Publicación</CardTitle>
-                  </CardHeader>
-                  <CardContent className="px-3 pb-3 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] text-gray-500">Estado</span>
-                      <Badge className="text-[9px] bg-emerald-100 text-emerald-700 border-0">Publicado</Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] text-gray-500">Última edición</span>
-                      <span className="text-[10px] font-medium">Hoy 10:30</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] text-gray-500">Visible en</span>
-                      <span className="text-[10px] font-medium">Pantalla, Kiosko</span>
-                    </div>
-                    <Button className="w-full h-8 text-xs mt-1" style={{ backgroundColor: GOLD }}>Guardar Cambios</Button>
-                    <Button variant="outline" className="w-full h-8 text-xs">Previsualizar</Button>
-                  </CardContent>
-                </Card>
-                <Card className="border-0 shadow-sm">
-                  <CardHeader className="pb-2 pt-3 px-3">
-                    <CardTitle className="text-xs font-semibold" style={{ color: NAVY }}>Stats</CardTitle>
-                  </CardHeader>
-                  <CardContent className="px-3 pb-3 space-y-1.5">
-                    {[
-                      { label: "Visualizaciones", val: "342" },
-                      { label: "Tiempo promedio", val: "45s" },
-                      { label: "Clics a lotes", val: "28" },
-                    ].map((s, i) => (
-                      <div key={i} className="flex items-center justify-between py-1">
-                        <span className="text-[10px] text-gray-500">{s.label}</span>
-                        <span className="text-[10px] font-bold" style={{ color: NAVY }}>{s.val}</span>
-                      </div>
-                    ))}
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </Screen>
-  );
-}
-
-// A-08: Content — Eventos
-function ContentEvents({ onNavigate }: { onNavigate: (id: string) => void }) {
-  return (
-    <Screen label="Contenido — Calendario de eventos" id="A-08">
-      <div className="h-full flex">
-        <Sidebar active="content" onNavigate={onNavigate} />
-        <div className="flex-1 flex flex-col">
-          <Topbar title="Eventos" />
-          <div className="flex-1 overflow-auto p-4 bg-gray-50/50">
-            <div className="flex items-center justify-between mb-3">
-              <ContentTabs active="events" onNavigate={onNavigate} />
-              <Button size="sm" className="h-8 text-xs gap-1" style={{ backgroundColor: GOLD }}>
-                <Plus className="w-3 h-3" /> Nuevo Evento
-              </Button>
-            </div>
-            <div className="space-y-2">
-              {[
-                { title: "Open House Las Riberas", date: "15 Mar", time: "10:00 - 14:00", type: "Ventas", color: "blue" },
-                { title: "Cena en Maderas", date: "18 Mar", time: "19:00 - 23:00", type: "Gastronomía", color: "amber" },
-                { title: "Torneo de Golf Primavera", date: "22 Mar", time: "08:00 - 16:00", type: "Deportes", color: "emerald" },
-                { title: "Inauguración Spa", date: "25 Mar", time: "11:00 - 15:00", type: "Lifestyle", color: "purple" },
-                { title: "Recorrido Nocturno", date: "28 Mar", time: "20:00 - 22:00", type: "Ventas", color: "blue" },
-              ].map((e, i) => (
-                <Card key={i} className="border-0 shadow-sm">
-                  <CardContent className="p-3 flex items-center gap-3">
-                    <div className={`w-1 h-12 rounded-full bg-${e.color}-500`} />
-                    <div className="w-12 text-center">
-                      <p className="text-lg font-bold" style={{ color: NAVY }}>{e.date.split(" ")[0]}</p>
-                      <p className="text-[9px] text-gray-500">{e.date.split(" ")[1]}</p>
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-xs font-semibold" style={{ color: NAVY }}>{e.title}</p>
-                      <p className="text-[10px] text-gray-500">{e.time}</p>
-                    </div>
-                    <Badge variant="outline" className="text-[9px]">{e.type}</Badge>
-                    <div className="flex gap-1">
-                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0"><Edit3 className="w-3 h-3 text-gray-400" /></Button>
-                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0"><Trash2 className="w-3 h-3 text-red-400" /></Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </Screen>
-  );
-}
-
-// A-09: Content — Media Library
-function ContentMedia({ onNavigate }: { onNavigate: (id: string) => void }) {
-  return (
-    <Screen label="Contenido — Biblioteca de medios" id="A-09">
-      <div className="h-full flex">
-        <Sidebar active="content" onNavigate={onNavigate} />
-        <div className="flex-1 flex flex-col">
-          <Topbar title="Biblioteca de Medios" />
-          <div className="flex-1 overflow-auto p-4 bg-gray-50/50">
-            <div className="flex items-center justify-between mb-3">
-              <ContentTabs active="media" onNavigate={onNavigate} />
-              <Button size="sm" className="h-8 text-xs gap-1" style={{ backgroundColor: GOLD }}>
-                <Upload className="w-3 h-3" /> Subir
-              </Button>
-            </div>
-            <div className="grid grid-cols-4 gap-3">
-              {[
-                { name: "hero-rio.mp4", type: "video", size: "24 MB" },
-                { name: "drone-aerial.mp4", type: "video", size: "48 MB" },
-                { name: "club-house.jpg", type: "img", size: "2.1 MB" },
-                { name: "plano-general.pdf", type: "pdf", size: "3.8 MB" },
-                { name: "amenidades.mp4", type: "video", size: "31 MB" },
-                { name: "lote-a12.jpg", type: "img", size: "1.4 MB" },
-                { name: "ficha-b03.pdf", type: "pdf", size: "890 KB" },
-                { name: "sunset-view.jpg", type: "img", size: "2.8 MB" },
-              ].map((m, i) => (
                 <Card key={i} className="border-0 shadow-sm overflow-hidden">
-                  <div className={`h-20 flex items-center justify-center ${
-                    m.type === "video" ? "bg-gray-800" : m.type === "img" ? "bg-gradient-to-br from-blue-100 to-green-100" : "bg-red-50"
-                  }`}>
-                    {m.type === "video" ? (
-                      <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                        <span className="text-white text-[10px]">▶</span>
-                      </div>
-                    ) : m.type === "img" ? (
-                      <Image className="w-6 h-6 text-gray-300" />
-                    ) : (
-                      <FileText className="w-6 h-6 text-red-300" />
-                    )}
+                  <div className="h-24 bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center">
+                    <div className="text-center">
+                      <FileText className="w-8 h-8 text-red-400 mx-auto" />
+                      <p className="text-[8px] text-red-400 mt-1">PDF</p>
+                    </div>
                   </div>
-                  <CardContent className="p-2">
-                    <p className="text-[10px] font-medium truncate" style={{ color: NAVY }}>{m.name}</p>
-                    <p className="text-[9px] text-gray-400">{m.size}</p>
+                  <CardContent className="p-3">
+                    <p className="text-[11px] font-semibold truncate" style={{ color: NAVY }}>{p.name}</p>
+                    <p className="text-[9px] text-gray-500 mt-0.5">{p.lote} • {p.size}</p>
+                    <div className="flex items-center justify-between mt-2">
+                      <span className="text-[9px] text-gray-400">{p.date} • {p.downloads} descargas</span>
+                      <div className="flex gap-1">
+                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0"><Download className="w-3 h-3 text-gray-400" /></Button>
+                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0"><Trash2 className="w-3 h-3 text-red-400" /></Button>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               ))}
@@ -751,9 +535,9 @@ function ContentMedia({ onNavigate }: { onNavigate: (id: string) => void }) {
 // Sync sub-tabs
 function SyncTabs({ active, onNavigate }: { active: string; onNavigate: (id: string) => void }) {
   const tabs = [
-    { id: "dashboard", label: "Dashboard", target: "A-10" },
-    { id: "mapping", label: "Mapeo", target: "A-11" },
-    { id: "devices", label: "Dispositivos", target: "A-12" },
+    { id: "dashboard", label: "Dashboard", target: "A-07" },
+    { id: "mapping", label: "Mapeo", target: "A-08" },
+    { id: "devices", label: "Dispositivos", target: "A-09" },
   ];
   return (
     <div className="flex gap-2 mb-3">
@@ -771,10 +555,10 @@ function SyncTabs({ active, onNavigate }: { active: string; onNavigate: (id: str
   );
 }
 
-// A-10: Sync — Dashboard
+// A-07: Sync — Dashboard
 function SyncDashboard({ onNavigate }: { onNavigate: (id: string) => void }) {
   return (
-    <Screen label="Sync Ops — Estado de sincronización" id="A-10">
+    <Screen label="Sync Ops — Estado de sincronización" id="A-07">
       <div className="h-full flex">
         <Sidebar active="sync" onNavigate={onNavigate} />
         <div className="flex-1 flex flex-col">
@@ -785,7 +569,6 @@ function SyncDashboard({ onNavigate }: { onNavigate: (id: string) => void }) {
             <div className="grid grid-cols-3 gap-3 mb-4">
               {[
                 { label: "HubSpot → Admin", status: "ok", lastSync: "Hace 5 min", deals: 48, icon: Globe },
-                { label: "Admin → Pantalla", status: "ok", lastSync: "Hace 12 min", deals: 12, icon: Activity },
                 { label: "Admin → Kiosko", status: "warn", lastSync: "Hace 35 min", deals: 10, icon: Database },
               ].map((s, i) => (
                 <Card key={i} className="border-0 shadow-sm">
@@ -822,12 +605,12 @@ function SyncDashboard({ onNavigate }: { onNavigate: (id: string) => void }) {
               <CardContent className="px-3 pb-3">
                 <div className="space-y-1.5">
                   {[
-                    { time: "14:32", action: "PUSH", detail: "Delta sync → 3 deals actualizados en Pantalla", status: "ok" },
+                    { time: "14:32", action: "PUSH", detail: "Delta sync → 3 deals actualizados en Kiosko", status: "ok" },
                     { time: "14:30", action: "PULL", detail: "Snapshot recibido de HubSpot — 48 deals", status: "ok" },
                     { time: "14:15", action: "PUSH", detail: "Cotización COT-0847 → HubSpot", status: "ok" },
                     { time: "14:00", action: "PUSH", detail: "Delta sync → Kiosko (timeout)", status: "err" },
                     { time: "13:45", action: "PULL", detail: "Webhook HubSpot — deal A-12 actualizado", status: "ok" },
-                    { time: "13:30", action: "PUSH", detail: "Snapshot completo → Pantalla + Kiosko", status: "ok" },
+                    { time: "13:30", action: "PUSH", detail: "Snapshot completo → Kiosko", status: "ok" },
                   ].map((l, i) => (
                     <div key={i} className="flex items-center gap-2 py-1 text-[10px] border-b border-gray-50 last:border-0">
                       <span className="text-gray-400 font-mono w-10">{l.time}</span>
@@ -852,10 +635,10 @@ function SyncDashboard({ onNavigate }: { onNavigate: (id: string) => void }) {
   );
 }
 
-// A-11: Sync — HubSpot Mapping
+// A-08: Sync — HubSpot Mapping
 function SyncMapping({ onNavigate }: { onNavigate: (id: string) => void }) {
   return (
-    <Screen label="Sync — Mapeo de campos HubSpot" id="A-11">
+    <Screen label="Sync — Mapeo de campos HubSpot" id="A-08">
       <div className="h-full flex">
         <Sidebar active="sync" onNavigate={onNavigate} />
         <div className="flex-1 flex flex-col">
@@ -911,10 +694,10 @@ function SyncMapping({ onNavigate }: { onNavigate: (id: string) => void }) {
   );
 }
 
-// A-12: Sync — Device Status
+// A-09: Sync — Device Status
 function SyncDevices({ onNavigate }: { onNavigate: (id: string) => void }) {
   return (
-    <Screen label="Sync — Estado de dispositivos" id="A-12">
+    <Screen label="Sync — Estado de dispositivos" id="A-09">
       <div className="h-full flex">
         <Sidebar active="sync" onNavigate={onNavigate} />
         <div className="flex-1 flex flex-col">
@@ -923,12 +706,11 @@ function SyncDevices({ onNavigate }: { onNavigate: (id: string) => void }) {
             <SyncTabs active="devices" onNavigate={onNavigate} />
             <div className="grid grid-cols-2 gap-3">
               {[
-                { name: "Pantalla Lobby", type: "Pantalla", status: "online", lastPing: "Hace 2 min", version: "1.2.0", cache: "92%" },
-                { name: "Pantalla Sala Ventas", type: "Pantalla", status: "online", lastPing: "Hace 1 min", version: "1.2.0", cache: "88%" },
                 { name: "Kiosko Entrada", type: "Kiosko", status: "online", lastPing: "Hace 3 min", version: "1.1.5", cache: "95%" },
+                { name: "Kiosko Sala Ventas", type: "Kiosko", status: "online", lastPing: "Hace 1 min", version: "1.1.5", cache: "88%" },
                 { name: "Kiosko Modelo", type: "Kiosko", status: "offline", lastPing: "Hace 35 min", version: "1.1.4", cache: "78%" },
-                { name: "Pantalla Casa Club", type: "Pantalla", status: "online", lastPing: "Hace 5 min", version: "1.2.0", cache: "90%" },
                 { name: "Kiosko Pool", type: "Kiosko", status: "online", lastPing: "Hace 1 min", version: "1.1.5", cache: "96%" },
+                { name: "Kiosko Casa Club", type: "Kiosko", status: "online", lastPing: "Hace 5 min", version: "1.1.5", cache: "90%" },
               ].map((d, i) => (
                 <Card key={i} className={`border-0 shadow-sm ${d.status === "offline" ? "ring-1 ring-red-200" : ""}`}>
                   <CardContent className="p-3">
@@ -969,10 +751,10 @@ function SyncDevices({ onNavigate }: { onNavigate: (id: string) => void }) {
   );
 }
 
-// A-13: Notificaciones
+// A-10: Notificaciones
 function NotificationsScreen({ onNavigate }: { onNavigate: (id: string) => void }) {
   return (
-    <Screen label="Notificaciones — Centro de alertas" id="A-13">
+    <Screen label="Notificaciones — Centro de alertas" id="A-10">
       <div className="h-full flex">
         <Sidebar active="alerts" onNavigate={onNavigate} />
         <div className="flex-1 flex flex-col">
@@ -989,7 +771,7 @@ function NotificationsScreen({ onNavigate }: { onNavigate: (id: string) => void 
                 { title: "Nueva cotización", desc: "COT-2026-0847 — Lote A-12 por Juan Pérez", time: "Hace 1h", type: "info", read: false },
                 { title: "Sync completado", desc: "HubSpot snapshot — 48 deals sincronizados", time: "Hace 2h", type: "success", read: false },
                 { title: "Capa GIS actualizada", desc: "Topografía v2 publicada exitosamente", time: "Hace 3h", type: "info", read: true },
-                { title: "Playlist expirada", desc: "Playlist Eventos — 2 videos sin publicar", time: "Hace 5h", type: "alert", read: true },
+                { title: "PDF sin vincular", desc: "Modelo Lago D — sin lote asignado", time: "Hace 5h", type: "alert", read: true },
                 { title: "Nuevo usuario", desc: "vendedor@lasriberas.mx agregado como Vendedor", time: "Ayer", type: "info", read: true },
                 { title: "Backup completado", desc: "Respaldo automático de base de datos", time: "Ayer", type: "success", read: true },
               ].map((n, i) => (
@@ -1023,10 +805,10 @@ function NotificationsScreen({ onNavigate }: { onNavigate: (id: string) => void 
   );
 }
 
-// A-14: Gestión de Usuarios
+// A-11: Gestión de Usuarios
 function UsersScreen({ onNavigate }: { onNavigate: (id: string) => void }) {
   return (
-    <Screen label="Usuarios — Roles y permisos" id="A-14">
+    <Screen label="Usuarios — Roles y permisos" id="A-11">
       <div className="h-full flex">
         <Sidebar active="users" onNavigate={onNavigate} />
         <div className="flex-1 flex flex-col">
@@ -1059,7 +841,7 @@ function UsersScreen({ onNavigate }: { onNavigate: (id: string) => void }) {
                   <tbody>
                     {[
                       { name: "Admin Principal", email: "admin@lasriberas.mx", role: "Super Admin", last: "Hoy 14:30", active: true },
-                      { name: "María García", email: "maria@lasriberas.mx", role: "Content Manager", last: "Hoy 12:15", active: true },
+                      { name: "María García", email: "maria@lasriberas.mx", role: "GIS Manager", last: "Hoy 12:15", active: true },
                       { name: "Carlos López", email: "carlos@lasriberas.mx", role: "GIS Manager", last: "Ayer", active: true },
                       { name: "Ana Rodríguez", email: "ana@lasriberas.mx", role: "Vendedor", last: "Hoy 10:30", active: true },
                       { name: "Pedro Martínez", email: "pedro@lasriberas.mx", role: "Vendedor", last: "Hace 3 días", active: false },
@@ -1109,15 +891,12 @@ const screens = [
   { id: "A-03", label: "GIS List" },
   { id: "A-04", label: "GIS Upload" },
   { id: "A-05", label: "GIS Preview" },
-  { id: "A-06", label: "Playlists" },
-  { id: "A-07", label: "Secciones" },
-  { id: "A-08", label: "Eventos" },
-  { id: "A-09", label: "Medios" },
-  { id: "A-10", label: "Sync" },
-  { id: "A-11", label: "Mapeo" },
-  { id: "A-12", label: "Devices" },
-  { id: "A-13", label: "Alertas" },
-  { id: "A-14", label: "Usuarios" },
+  { id: "A-06", label: "PDFs" },
+  { id: "A-07", label: "Sync" },
+  { id: "A-08", label: "Mapeo" },
+  { id: "A-09", label: "Devices" },
+  { id: "A-10", label: "Alertas" },
+  { id: "A-11", label: "Usuarios" },
 ];
 
 // Main export
@@ -1132,15 +911,12 @@ export function AdminApp() {
         {screen === "A-03" && <GISList onNavigate={setScreen} />}
         {screen === "A-04" && <GISUpload onNavigate={setScreen} />}
         {screen === "A-05" && <GISPreview onNavigate={setScreen} />}
-        {screen === "A-06" && <ContentPlaylist onNavigate={setScreen} />}
-        {screen === "A-07" && <ContentSections onNavigate={setScreen} />}
-        {screen === "A-08" && <ContentEvents onNavigate={setScreen} />}
-        {screen === "A-09" && <ContentMedia onNavigate={setScreen} />}
-        {screen === "A-10" && <SyncDashboard onNavigate={setScreen} />}
-        {screen === "A-11" && <SyncMapping onNavigate={setScreen} />}
-        {screen === "A-12" && <SyncDevices onNavigate={setScreen} />}
-        {screen === "A-13" && <NotificationsScreen onNavigate={setScreen} />}
-        {screen === "A-14" && <UsersScreen onNavigate={setScreen} />}
+        {screen === "A-06" && <StoragePDFs onNavigate={setScreen} />}
+        {screen === "A-07" && <SyncDashboard onNavigate={setScreen} />}
+        {screen === "A-08" && <SyncMapping onNavigate={setScreen} />}
+        {screen === "A-09" && <SyncDevices onNavigate={setScreen} />}
+        {screen === "A-10" && <NotificationsScreen onNavigate={setScreen} />}
+        {screen === "A-11" && <UsersScreen onNavigate={setScreen} />}
       </div>
       <div className="screen-strip">
         {screens.map(s => (

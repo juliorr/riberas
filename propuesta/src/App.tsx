@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { PantallaApp } from "./apps/PantallaApp";
 import { KioskoApp } from "./apps/KioskoApp";
 import { AdminApp } from "./apps/AdminApp";
-import { Smartphone, Monitor, Tablet, ChevronRight, Layers, TabletSmartphone, RotateCcw } from "lucide-react";
+import { PropuestaApp } from "./apps/PropuestaApp";
+import { Monitor, Tablet, ChevronRight, Layers, Smartphone, TabletSmartphone, RotateCcw, FileText } from "lucide-react";
 import logoRounded from "./assets/logo-rounded.png";
 
 export type DeviceType = "phone" | "tablet-v" | "tablet-h";
@@ -11,15 +11,6 @@ const NAVY = "#1B2A4A";
 const GOLD = "#B8860B";
 
 const apps = [
-  {
-    id: "pantalla",
-    label: "Pantalla",
-    subtitle: "Digital Signage",
-    count: 12,
-    icon: Smartphone,
-    tech: "React Native",
-    desc: "Experiencia inmersiva en dispositivos en sitio. Contenido multimedia, inventario en tiempo real y modo offline.",
-  },
   {
     id: "kiosko",
     label: "Kiosko",
@@ -33,18 +24,28 @@ const apps = [
     id: "admin",
     label: "Panel Admin",
     subtitle: "Gestión Central",
-    count: 14,
+    count: 11,
     icon: Monitor,
     tech: "React Web",
-    desc: "GIS Manager, Content Manager, Sync Ops, notificaciones y gestión de usuarios con RBAC.",
+    desc: "GIS Manager, Storage PDFs, Sync Ops, notificaciones y gestión de usuarios con RBAC.",
+  },
+  {
+    id: "propuesta",
+    label: "Propuesta",
+    subtitle: "Documento Técnico",
+    count: 13,
+    icon: FileText,
+    tech: "Especificación",
+    desc: "Arquitectura, stack, plan de implementación, APIs, seguridad y cronograma del proyecto.",
   },
 ];
 
 export default function App() {
-  const [activeApp, setActiveApp] = useState("pantalla");
+  const [activeApp, setActiveApp] = useState("kiosko");
   const [deviceType, setDeviceType] = useState<DeviceType>("tablet-h");
   const active = apps.find((a) => a.id === activeApp)!;
-  const isMobileApp = activeApp !== "admin";
+  const isMobileApp = activeApp === "kiosko";
+  const isDocApp = activeApp === "propuesta";
 
   return (
     <div className="min-h-screen bg-[#F5F0E8]">
@@ -74,7 +75,7 @@ export default function App() {
             <div className="text-right mt-1">
               <div className="flex items-center gap-2 text-white/30 text-sm">
                 <Layers className="w-4 h-4" />
-                <span>36 pantallas</span>
+                <span>21 pantallas</span>
               </div>
               <p className="text-white/20 text-xs mt-1">
                 React Native + React Web + Python
@@ -174,7 +175,7 @@ export default function App() {
             )}
             <div className="flex items-center gap-2 text-gray-400 text-xs bg-white/60 px-3 py-2 rounded-lg border border-[#E8E0D4]">
               <span className="font-mono" style={{ color: GOLD }}>{active.count}</span>
-              <span>pantallas</span>
+              <span>{isDocApp ? "secciones" : "pantallas"}</span>
               <ChevronRight className="w-3 h-3" />
               <span className="text-gray-300">interactivo</span>
             </div>
@@ -184,9 +185,9 @@ export default function App() {
 
       {/* ── Screen Gallery ── */}
       <div className="px-8 pb-12">
-        {activeApp === "pantalla" && <PantallaApp deviceType={deviceType} />}
         {activeApp === "kiosko" && <KioskoApp deviceType={deviceType} />}
         {activeApp === "admin" && <AdminApp />}
+        {activeApp === "propuesta" && <PropuestaApp />}
       </div>
 
       {/* ── Footer ── */}
