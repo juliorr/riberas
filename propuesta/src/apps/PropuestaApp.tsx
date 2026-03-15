@@ -307,6 +307,11 @@ function SecModelo() {
     ["quotes", "id, folio, prospect_name, email, lot_id, hubspot_deal_id, status", "Cotizaciones con trazabilidad HubSpot"],
     ["gis_versions", "id, filename, file_type, version, datum, validated, active", "Versionado de archivos GIS"],
     ["content_assets", "id, category (pdf/media), storage_path, mime_type, size_bytes", "Assets multimedia"],
+    ["users", "id, email, password_hash, full_name, role (admin/editor/viewer), is_active, created_at, updated_at", "Usuarios del Panel Administrativo con roles RBAC"],
+    ["refresh_tokens", "id, user_id (FK users), token_hash, expires_at, revoked, created_at", "Tokens de refresh para sesiones JWT, logout remoto y control de concurrencia"],
+    ["notifications", "id, type, title, message, priority (low/medium/high/critical), is_read, created_at", "Alertas del sistema: errores GIS, fallas de integracion, formato invalido"],
+    ["amenities", "id, name, description, category, icon_url, geom (PostGIS), created_at", "Amenidades y areas verdes del desarrollo inmobiliario"],
+    ["audit_log", "id, user_id (FK users), action, entity_type, entity_id, detail (JSONB), ip_address, created_at", "Bitacora inmutable de acciones administrativas"],
   ];
 
   return (
