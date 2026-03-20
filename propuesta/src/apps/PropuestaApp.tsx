@@ -106,7 +106,7 @@ function SecResumen() {
         {[
           { label: "Soluciones", value: "2", sub: "Kiosko + Gateway" },
           { label: "Duracion", value: "16 sem", sub: "~4 meses" },
-          { label: "Esfuerzo", value: "1,936h", sub: "4 roles" },
+          { label: "Esfuerzo", value: "1,404h", sub: "4 roles" },
         ].map(m => (
           <div key={m.label} className="rounded-lg p-3 text-center border border-[#E8E0D4] bg-[#FDFBF7]">
             <div className="text-xl font-bold" style={{ color: GOLD }}>{m.value}</div>
@@ -511,18 +511,18 @@ function SecPlan() {
     ["5", "QA & Deploy", "2 sem", "Testing E2E, aceptacion, deploy productivo, documentacion, handover"],
   ];
   const hours = [
-    ["Tech Lead / Arquitecto", "80", "120", "160", "80", "70", "70", "580"],
-    ["Backend Developer", "80", "120", "160", "110", "50", "40", "560"],
-    ["Frontend Developer (RN)", "40", "60", "160", "100", "60", "40", "460"],
-    ["QA Engineer", "48", "72", "96", "60", "36", "24", "336"],
-    ["Total por fase", "248", "372", "576", "350", "216", "174", "1,936"],
+    ["Tech Lead / Arquitecto", "57", "86", "114", "57", "50", "50", "414"],
+    ["Backend Developer", "57", "86", "114", "78", "36", "29", "400"],
+    ["Frontend Developer (RN)", "29", "43", "114", "71", "43", "29", "329"],
+    ["QA Engineer", "34", "52", "68", "47", "30", "30", "261"],
+    ["Total por fase", "177", "267", "410", "253", "159", "138", "1,404"],
   ];
   const kanban = [
-    ["Horas - API", "Gateway, HubSpot, APIs, GIS backend, Celery/Redis", "~1,140h"],
-    ["Horas - Web", "Panel Admin React (11 pantallas)", "~250-300h"],
-    ["Mobile - App", "Kiosko (10 pantallas) en React Native", "~460h"],
-    ["Horas - DevOps", "Docker, CI/CD, monitoreo, deploy, seguridad", "~180-220h"],
-    ["Horas - QA", "Testing E2E, integracion, aceptacion, offline", "~336h"],
+    ["Horas - API", "Gateway, integracion HubSpot, APIs de cada servicio (Kiosko, Panel Admin), procesamiento GIS backend, Celery/Redis", "~612h"],
+    ["Horas - Web", "Panel Administrativo React (11 pantallas), componentes web reutilizables", "~202h"],
+    ["Mobile - App", "App Kiosko (10 pantallas) en React Native, componentes moviles", "~444h"],
+    ["Horas - DevOps", "Docker, CI/CD, monitoreo (Prometheus/Grafana), deploy, seguridad, infraestructura", "~146h"],
+    ["Horas - QA", "Testing E2E, pruebas de integracion, pruebas de aceptacion, pruebas offline", "~260h"],
   ];
 
   return (
